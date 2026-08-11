@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=14">
+    <link rel="stylesheet" href="style.css?v=15">
     <script src="https://telegram.org"></script>
-    <script src="cities.js?v=14"></script>
+    <script src="cities.js?v=15"></script>
+    <!-- ПОДКЛЮЧАЕМ НОВЫЙ ФАЙЛ СВАЙПОВ -->
+    <script src="swipes.js?v=15"></script>
 </head>
 <body>
 
@@ -65,13 +67,11 @@
             <input type="hidden" id="reg-photo-base64" value="">
             
             <button onclick="saveAndShowProfile()" class="btn-purple uppercase">Сохранить анкету</button>
-            
-            <!-- КНОПКА НАЗАД (ДОБАВЛЕНА СТРОГО СЮДА ПОД СОХРАНЕНИЕ) -->
             <button onclick="location.reload()" class="btn-purple uppercase" style="margin: 10px auto 15px auto; background: transparent; border: 1px solid #621244; color: #621244; box-shadow: none;">Назад</button>
         </div>
     </div>
 
-    <!-- ЭКРАН 3: ПРОСМОТР ПРОФИЛЯ -->
+    <!-- ЭКРАН 3: ПРОСМОТР ПРОФИЛЯ / СВАЙПЫ -->
     <div id="screen-view" class="screen screen-profile hidden">
         <div class="profile-header">
             <div class="header-logo-title">Cherry Club 🍒</div>
@@ -88,10 +88,19 @@
             <p id="view-target" class="profile-target-tag">Цель: Длительное общение</p>
             <div class="about-label">О себе</div>
             <p id="view-bio" class="view-bio-text">Описание анкеты...</p>
+            
             <div id="view-actions-container"></div>
+
+            <!-- БЛОК КНОПОК ДЛЯ СВАЙПОВ (ПОД КАРТОЧКОЙ) -->
+            <div id="swipe-buttons-container" class="hidden" style="display: flex; justify-content: center; gap: 30px; margin-top: 15px;">
+                <!-- КНОПКА КРЕСТИК (ДИЗЛАЙК) -->
+                <button onclick="handleDislike()" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid #e31b6d; background: white; color: #e31b6d; font-size: 22px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); outline: none;">✕</button>
+                <!-- КНОПКА ГАЛОЧКА (ЛАЙК) -->
+                <button onclick="handleLike()" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid #10b981; background: white; color: #10b981; font-size: 22px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); outline: none;">✓</button>
+            </div>
         </div>
     </div>
 
-    <script src="app.js?v=14"></script>
+    <script src="app.js?v=15"></script>
 </body>
 </html>
