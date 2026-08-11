@@ -16,6 +16,10 @@ const cities = [
     "Смоленск", "Курган", "Череповец", "Вологда", "Орел", "Владикавказ", "Мурманск", "Саранск"
 ].sort();
 
+// Глобальные переменные для хранения текущей сгенерированной ссылки
+let currentGeneratedData = "";
+let isOwnProfile = false;
+
 function init() {
     renderCityList();
     
@@ -29,8 +33,12 @@ function init() {
     let encodedData = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp');
 
     if (encodedData) {
+        // Мы открыли ЧУЖУЮ анкету по ссылке
+        isOwnProfile = false;
         showViewScreen(encodedData);
     } else {
+        // Мы открыли приложение просто так (свой профиль)
+        isOwnProfile = true;
         document.getElementById('screen-register').classList.remove('hidden');
     }
 }
@@ -122,8 +130,38 @@ function handlePhotoUpload(input) {
     }
 }
 
+// ФУНКЦИЯ СОХРАНЕНИЯ: ПЕРЕНПРАВЛЯЕТ НА СТРАНИЦУ ПРОФИЛЯ СРАЗУ
+function saveAndShowProfile() {
+    const name = document.getElementById('reg-name').value.trim();
+    const age = document.getElementById('reg-age').value.trim();
+    const gender = document.getElementById('reg-gender').value;
+    const city = document.getElementById('reg-city').value; 
+    const target = document.getElementById('reg-target').value;
+    const bio = document.getElementById('reg-bio').value.trim();
+    const photo = document.getElementById('reg-photo-base64').value;
+    const username = tg?.initDataUnsafe?.user?.username || "test_user";
+
+    if (!name || !age || !city || !bio) { 
+        return alert("Пожалуйста, заполните все поля анкеты!"); 
+    }
+
+    let profileString = `name=${encodeURIComponent(name)}&age=${encodeURIComponent(age)}&gender=${encodeURIComponent(gender)}&city=${encodeURIComponent(city)}&target=${encodeURIComponent(target)}&bio=${encodeURIComponent(bio)}&user=${username}`;
+    if (photo) {
+        profileString += `&photo=${encodeURIComponent(photo)}`;
+    }
+
+    currentGeneratedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+    }));
+
+    // Прячем экран ввода, включаем экран просмотра
+    document.getElementById('screen-register').classList.add('hidden');
+    showViewScreen(currentGeneratedData);
+}
+
 function showViewScreen(encodedData) {
     try {
+        currentGeneratedData = encodedData;
         const decodedString = decodeURIComponent(atob(encodedData).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
@@ -133,7 +171,6 @@ function showViewScreen(encodedData) {
         document.getElementById('view-gender-city').innerText = params.get('gender') + " • " + params.get('city');
         document.getElementById('view-target').innerText = "Цель: " + params.get('target');
         document.getElementById('view-bio').innerText = params.get('bio');
-        document.getElementById('view-chat-btn').href = "https://t.me" + params.get('user');
         
         const photoData = params.get('photo');
         const avatarCircle = document.getElementById('view-avatar-circle');
@@ -145,49 +182,45 @@ function showViewScreen(encodedData) {
             avatarCircle.style.backgroundImage = 'none';
         }
         
+        // РЕНДЕР КНОПОК ПОД ЭКРАН
+        const actionsContainer = document.getElementById('view-actions-container');
+        actionsContainer.innerHTML = '';
+
+        if (isOwnProfile) {
+            // Если это СВОЙ СОБСТВЕННЫЙ профиль — выводим функции шеринга и верификации
+            actionsContainer.innerHTML = `
+                <button onclick="shareProfileLink()" class="btn-pink uppercase" style="margin: 5px auto;">Поделиться профилем 🍒</button>
+                <button onclick="sendToModeration()" class="btn-purple uppercase" style="margin: 5px auto; background: #621244;">Пройти верификацию 🛡️</button>
+                <button onclick="backToEdit()" class="btn-purple uppercase" style="margin: 5px auto; background: #8e8e8e; color: white;">Редактировать</button>
+            `;
+        } else {
+            // Если это ЧУЖОЙ профиль — выводим кнопку «Написать»
+            actionsContainer.innerHTML = `
+                <a href="https://t.me{params.get('user')}" target="_blank" class="btn-pink uppercase" style="text-decoration:none; text-align:center; display:block; line-height:24px; margin: 5px auto;">Написать в ЛС</a>
+            `;
+        }
+
         document.getElementById('screen-view').classList.remove('hidden');
     } catch (e) {
-        alert("Ошибка разбора анкеты.");
+        alert("Ошибка отображения профиля.");
         document.getElementById('screen-register').classList.remove('hidden');
     }
 }
 
-function shareProfile() {
-    const name = document.getElementById('reg-name').value.trim();
-    const age = document.getElementById('reg-age').value.trim();
-    const gender = document.getElementById('reg-gender').value;
-    const city = document.getElementById('reg-city').value; 
-    const target = document.getElementById('reg-target').value;
-    const bio = document.getElementById('reg-bio').value.trim();
-    const photo = document.getElementById('reg-photo-base64').value;
-    const username = tg?.initDataUnsafe?.user?.username || "test_user";
-
-    if (!name || !age || !city || !bio) { 
-        return alert("Заполните имя, возраст, выберите город из списка и заполните описание!"); 
-    }
-
-    let profileString = "name=" + encodeURIComponent(name) + "&age=" + encodeURIComponent(age) + "&gender=" + encodeURIComponent(gender) + "&city=" + encodeURIComponent(city) + "&target=" + encodeURIComponent(target) + "&bio=" + encodeURIComponent(bio) + "&user=" + username;
-    
-    if (photo) {
-        profileString += "&photo=" + encodeURIComponent(photo);
-    }
-
-    const encodedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode('0x' + p1);
-    }));
-
-    const appLink = "https://t.me" + BOT_USERNAME + "/app?startapp=" + encodedData;
-    const shareText = "🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: " + name + ", " + age + " лет (" + gender + ")\n📍 Город: " + city + "\n🎯 Цель: " + target + "\n📝 О себе: " + bio + "\n\n🔗 Смотреть анкету и фото: " + appLink;
-
-    const finalTelegramUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
-
-    if (tg && tg.openTelegramLink) {
-        tg.openTelegramLink(finalTelegramUrl);
-    } else {
-        window.open(finalTelegramUrl, '_blank');
-    }
-    
-    alert("Инструкция:\nОтправьте текст анкеты в Чат Модерации (https://t.me). После проверки администратором она появится в общей ленте!");
+function backToEdit() {
+    document.getElementById('screen-view').classList.add('hidden');
+    document.getElementById('screen-register').classList.remove('hidden');
 }
 
-init();
+// КНОПКА 1: ПРОСТО БЫСТРЫЙ ШЕРИНГ ССЫЛКИ
+function shareProfileLink() {
+    const appLink = `https://t.me{BOT_USERNAME}/app?startapp=${currentGeneratedData}`;
+    const shareText = `🍒 Привет! Глянь мою анкету в децентрализованном клубе знакомств Cherry Club! Ищи меня по ссылке:`;
+    
+    const url = "https://t.me" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
+    if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
+    else window.open(url, '_blank');
+}
+
+// КНОПКА 2: ОТПРАВКА НА ВЕРИФИКАЦИЮ С КРУЖОЧКОМ (ОПЦИОНАЛЬНО)
+function sendToModeration() {
