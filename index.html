@@ -30,7 +30,7 @@
         <input type="text" id="reg-city" placeholder="Город" class="input">
         <textarea id="reg-bio" placeholder="О себе..." rows="3" class="input" style="resize:none;"></textarea>
         
-        <p style="font-size:12px; color:#f43f5e; margin: 15px 0 5px 0;">📹 Потребуется видео-верификация кружочком!</p>
+        <p style="font-size:12px; color:#f43f5e; margin: 15px 0 5px 0;">📹 Потребуется video-верификация кружочком!</p>
         <button onclick="shareProfile()" class="btn">Опубликовать анкету</button>
     </div>
 
@@ -46,7 +46,6 @@
     </div>
 
     <script>
-        // Защита: инициализируем WebApp только если скрипт доступен
         let tg = null;
         if (window.Telegram && window.Telegram.WebApp) {
             tg = window.Telegram.WebApp;
@@ -78,8 +77,8 @@
                 document.getElementById('view-bio').innerText = "«" + params.get('bio') + "»";
                 document.getElementById('view-chat-btn').href = "https://t.me" + params.get('user');
                 
-                document.getElementById('screen-register').style.style.display = 'none';
-                document.getElementById('screen-view').style.style.display = 'block';
+                document.getElementById('screen-register').style.display = 'none';
+                document.getElementById('screen-view').style.display = 'block';
             } catch (e) {
                 alert("Ошибка загрузки профиля.");
             }
@@ -104,9 +103,9 @@
             const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: ${name}, ${age}\n📍 Город: ${city}\n📝 О себе: ${bio}\n\n🔗 Профиль: ${appLink}\n\n⚠️ ВНИМАНИЕ: Запишите видео-кружочек СЛЕДУЮЩИМ сообщением в чат для верификации!`;
 
             if (tg) {
-                tg.openTelegramLink(`https://t.meshare/url?url=${encodeURIComponent(appLink)}&text=${encodeURIComponent(shareText)}`);
+                tg.openTelegramLink("https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText));
             } else {
-                const webShareUrl = `https://t.meshare/url?url=${encodeURIComponent(appLink)}&text=${encodeURIComponent(shareText)}`;
+                const webShareUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
                 window.open(webShareUrl, '_blank');
             }
             alert("Инструкция:\nОтправьте сгенерированный текст в Чат Модерации (" + MODERATION_CHAT + "), а СЛЕДУЮЩИМ сообщением запишите туда свой видео-кружочек.");
