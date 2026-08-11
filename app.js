@@ -4,7 +4,29 @@ if (tg) { tg.ready(); tg.expand(); }
 const BOT_USERNAME = "sweet_cherry_club_bot";
 const MODERATION_CHAT = "https://t.me";
 
+// ОГРОМНЫЙ БАЗОВЫЙ СПИСОК ГОРОДОВ РОССИИ И РЕГИОНОВ
+const cities = [
+    "Архангельск", "Северодвинск", "Котлас", "Новодвинск", "Коряжма", "Мирный", "Вельск",
+    "Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург", "Казань", "Нижний Новгород",
+    "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж",
+    "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Ульяновск",
+    "Иркутск", "Владивосток", "Ярославль", "Махачкала", "Томск", "Оренбург", "Кемерово",
+    "Новокузнецк", "Рязань", "Астрахань", "Набережные Челны", "Пенза", "Липецк", "Тула",
+    "Киров", "Чебоксары", "Калининград", "Курск", "Улан-Удэ", "Ставрополь", "Магнитогорск",
+    "Тверь", "Иваново", "Брянск", "Сочи", "Белгород", "Нижний Тагил", "Владимир", "Севастополь",
+    "Смоленск", "Курган", "Череповец", "Вологда", "Орел", "Владикавказ", "Мурманск", "Саранск"
+].sort();
+
 function init() {
+    renderCityList();
+    
+    // Закрытие списка городов при клике мимо
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.form-group')) {
+            hideCityList();
+        }
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
     let encodedData = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp');
 
@@ -18,6 +40,50 @@ function init() {
 function goToRegister() {
     document.getElementById('screen-match').classList.add('hidden');
     document.getElementById('screen-register').classList.remove('hidden');
+}
+
+function renderCityList() {
+    const container = document.getElementById('city-dropdown');
+    container.innerHTML = '';
+    cities.forEach(city => {
+        const div = document.createElement('div');
+        div.className = 'city-item';
+        div.innerText = city;
+        div.onclick = () => selectCity(city);
+        container.appendChild(div);
+    });
+}
+
+function showCityList() {
+    document.getElementById('city-dropdown').classList.remove('hidden');
+}
+
+function hideCityList() {
+    document.getElementById('city-dropdown').classList.add('hidden');
+}
+
+function filterCities() {
+    const value = document.getElementById('city-search').value.toLowerCase();
+    const items = document.querySelectorAll('.city-item');
+    let hasResults = false;
+    
+    items.forEach(item => {
+        if (item.innerText.toLowerCase().includes(value)) {
+            item.style.display = 'block';
+            hasResults = true;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    if (hasResults) showCityList();
+    else hideCityList();
+}
+
+function selectCity(city) {
+    document.getElementById('city-search').value = city;
+    document.getElementById('reg-city').value = city;
+    hideCityList();
 }
 
 function showViewScreen(encodedData) {
@@ -41,11 +107,11 @@ function showViewScreen(encodedData) {
 
 function shareProfile() {
     const nameAge = document.getElementById('reg-name').value.trim();
-    const city = document.getElementById('reg-city').value; // Берем выбранное значение из select
+    const city = document.getElementById('reg-city').value; 
     const bio = document.getElementById('reg-bio').value.trim();
     const username = tg?.initDataUnsafe?.user?.username || "test_user";
 
-    if (!nameAge || !city || !bio) { return alert("Заполните имя, выберите город и описание!"); }
+    if (!nameAge || !city || !bio) { return alert("Заполните имя, выберите город из списка и заполните описание!"); }
 
     const profileString = `name=${encodeURIComponent(nameAge)}&city=${encodeURIComponent(city)}&bio=${encodeURIComponent(bio)}&user=${username}`;
     const encodedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
@@ -53,8 +119,6 @@ function shareProfile() {
     }));
 
     const appLink = `https://t.me${BOT_USERNAME}/app?startapp=${encodedData}`;
-    
-    // Чистый текст заявки без упоминания обязательных кружочков
     const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Профиль: ${nameAge}\n📍 Город: ${city}\n📝 О себе: ${bio}\n\n🔗 Смотреть анкету: ${appLink}`;
 
     const finalTelegramUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
