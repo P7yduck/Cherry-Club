@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css?v=8">
     <script src="https://telegram.org"></script>
 </head>
 <body>
 
     <!-- ЭКРАН 1: АНКЕТА / РЕГИСТРАЦИЯ -->
-    <div id="screen-register" class="screen screen-profile hidden">
+    <div id="screen-register" class="screen screen-profile">
         <div class="profile-header">
             <div class="header-logo-title">Cherry Club 🍒</div>
             <div class="avatar-circle">🍒</div>
@@ -54,7 +54,6 @@
             </div>
             <input type="hidden" id="reg-photo-base64" value="">
             
-            <!-- КНОПКА ТЕПЕРЬ ПРОСТО СОХРАНЯЕТ ЛОКАЛЬНО -->
             <button onclick="saveAndShowProfile()" class="btn-purple uppercase">Сохранить анкету</button>
         </div>
     </div>
@@ -73,13 +72,12 @@
             <div class="about-label">О себе</div>
             <p id="view-bio" class="view-bio-text">Описание анкеты...</p>
             
-            <!-- БЛОК ДИНАМИЧЕСКИХ КНОПОК -->
-            <div id="view-actions-container" class="space-y-2">
-                <!-- Сюда JS подставит нужные кнопки в зависимости от того, чужой профиль или свой -->
+            <div id="view-actions-container">
+                <!-- Сюда JS подставит нужные кнопки -->
             </div>
         </div>
     </div>
 
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=8"></script>
 </body>
 </html>
