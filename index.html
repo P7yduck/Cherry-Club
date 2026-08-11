@@ -30,7 +30,7 @@
         <input type="text" id="reg-city" placeholder="Город" class="input">
         <textarea id="reg-bio" placeholder="О себе..." rows="3" class="input" style="resize:none;"></textarea>
         
-        <p style="font-size:12px; color:#f43f5e; margin: 15px 0 5px 0;">📹 Потребуется video-верификация кружочком!</p>
+        <p style="font-size:12px; color:#f43f5e; margin: 15px 0 5px 0;">📹 Потребуется видео-верификация кружочком!</p>
         <button onclick="shareProfile()" class="btn">Опубликовать анкету</button>
     </div>
 
@@ -99,15 +99,17 @@
                 return String.fromCharCode('0x' + p1);
             }));
 
-            const appLink = `https://t.me${BOT_USERNAME}/app?startapp=${encodedData}`;
-            const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: ${name}, ${age}\n📍 Город: ${city}\n📝 О себе: ${bio}\n\n🔗 Профиль: ${appLink}\n\n⚠️ ВНИМАНИЕ: Запишите видео-кружочек СЛЕДУЮЩИМ сообщением в чат для верификации!`;
+            const appLink = "https://t.me" + BOT_USERNAME + "/app?startapp=" + encodedData;
+            const shareText = "🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: " + name + ", " + age + "\n📍 Город: " + city + "\n📝 О себе: " + bio + "\n\n🔗 Профиль: " + appLink + "\n\n⚠️ ВНИМАНИЕ: Запишите видео-кружочек СЛЕДУЮЩИМ сообщением в чат для верификации!";
 
-            if (tg) {
-                tg.openTelegramLink("https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText));
+            const finalTelegramUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
+
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(finalTelegramUrl);
             } else {
-                const webShareUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
-                window.open(webShareUrl, '_blank');
+                window.open(finalTelegramUrl, '_blank');
             }
+            
             alert("Инструкция:\nОтправьте сгенерированный текст в Чат Модерации (" + MODERATION_CHAT + "), а СЛЕДУЮЩИМ сообщением запишите туда свой видео-кружочек.");
         }
 
