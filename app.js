@@ -4,7 +4,6 @@ if (tg) { tg.ready(); tg.expand(); }
 const BOT_USERNAME = "sweet_cherry_club_bot";
 const MODERATION_CHAT = "https://t.me";
 
-// ОГРОМНЫЙ БАЗОВЫЙ СПИСОК ГОРОДОВ РОССИИ И РЕГИОНОВ
 const cities = [
     "Архангельск", "Северодвинск", "Котлас", "Новодвинск", "Коряжма", "Мирный", "Вельск",
     "Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург", "Казань", "Нижний Новгород",
@@ -20,7 +19,6 @@ const cities = [
 function init() {
     renderCityList();
     
-    // Закрытие списка городов при клике мимо
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.form-group')) {
             hideCityList();
@@ -33,13 +31,9 @@ function init() {
     if (encodedData) {
         showViewScreen(encodedData);
     } else {
-        document.getElementById('screen-match').classList.remove('hidden');
+        // Убрали экран совпадений, сразу открываем создание анкеты
+        document.getElementById('screen-register').classList.remove('hidden');
     }
-}
-
-function goToRegister() {
-    document.getElementById('screen-match').classList.add('hidden');
-    document.getElementById('screen-register').classList.remove('hidden');
 }
 
 function renderCityList() {
