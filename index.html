@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=1">
+    <link rel="stylesheet" href="style.css?v=2">
     <script src="https://telegram.org"></script>
 </head>
 <body>
@@ -20,7 +20,7 @@
         <div class="sub-text">Keep on Playing</div>
     </div>
 
-    <!-- ЭКРАН 2: АНКЕТА / РЕГИСТРАЦИЯ (В стиле профиля) -->
+    <!-- ЭКРАН 2: АНКЕТА / РЕГИСТРАЦИЯ -->
     <div id="screen-register" class="screen screen-profile hidden">
         <div class="profile-header">
             <div class="avatar-circle">🍒</div>
@@ -28,7 +28,21 @@
         <div class="profile-body">
             <div class="form-group">
                 <input type="text" id="reg-name" placeholder="Account Name, Age" class="profile-input-title">
-                <input type="text" id="reg-city" placeholder="sheffield, england" class="profile-input-sub">
+                
+                <!-- ВЫБОР ГОРОДА ВМЕСТО РУЧНОГО ВВОДА -->
+                <select id="reg-city" class="profile-input-sub-select">
+                    <option value="" disabled selected>Выберите город...</option>
+                    <option value="Москва">Москва</option>
+                    <option value="Санкт-Петербург">Санкт-Петербург</option>
+                    <option value="Новосибирск">Новосибирск</option>
+                    <option value="Екатеринбург">Екатеринбург</option>
+                    <option value="Казань">Казань</option>
+                    <option value="Нижний Новгород">Нижний Новгород</option>
+                    <option value="Челябинск">Челябинск</option>
+                    <option value="Самара">Самара</option>
+                    <option value="Ростов-на-Дону">Ростов-на-Дону</option>
+                    <option value="Краснодар">Краснодар</option>
+                </select>
             </div>
             
             <div class="about-label">About</div>
@@ -44,7 +58,7 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 3: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ (РЕЖИМ ПРОСМОТРА) -->
+    <!-- ЭКРАН 3: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ -->
     <div id="screen-view" class="screen screen-profile hidden">
         <div class="profile-header">
             <div class="avatar-circle">👤</div>
@@ -60,6 +74,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=1"></script>
+    <script src="app.js?v=2"></script>
 </body>
 </html>
