@@ -4,46 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=8">
+    <link rel="stylesheet" href="style.css?v=9">
     <script src="https://telegram.org"></script>
 </head>
 <body>
 
-    <!-- ЭКРАН 1: АНКЕТА / РЕГИСТРАЦИЯ -->
-    <div id="screen-register" class="screen screen-profile">
+    <!-- ЭКРАН 1: ВХОД / РЕГИСТРАЦИЯ (ПРИВЕТСТВЕННЫЙ) -->
+    <div id="screen-auth" class="screen screen-profile" style="background: linear-gradient(to bottom, #621244, #3a0525); justify-content: center; align-items: center; p-top: 0;">
+        <h1 style="color:#ffffff; font-size: 32px; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 40px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Cherry Club 🍒</h1>
+        <div style="width: 85%; display: flex; flex-direction: column; gap: 15px;">
+            <button onclick="authAction('login')" class="btn-pink uppercase" style="margin: 0; width: 100%;">Войти в профиль</button>
+            <button onclick="authAction('register')" class="btn-purple uppercase" style="margin: 0; width: 100%; background: #ffffff; color: #621244;">Регистрация</button>
+        </div>
+        <p style="font-size: 11px; opacity: 0.6; margin-top: 30px; padding: 0 20px;">Клуб знакомств без хранения данных на серверах</p>
+    </div>
+
+    <!-- ЭКРАН 2: СОЗДАНИЕ АНКЕТЫ -->
+    <div id="screen-register" class="screen screen-profile hidden">
         <div class="profile-header">
             <div class="header-logo-title">Cherry Club 🍒</div>
             <div class="avatar-circle">🍒</div>
         </div>
         <div class="profile-body">
-            
             <div class="form-group-vertical">
                 <input type="text" id="reg-name" placeholder="Имя" class="profile-input-line">
                 <input type="number" id="reg-age" placeholder="Возраст" class="profile-input-line" min="18" max="99">
-                
                 <div class="about-label" style="margin-top: 10px;">Ваш пол</div>
                 <div class="toggle-container">
                     <button type="button" id="gender-male" class="toggle-btn active" onclick="selectGender('Парень')">Парень</button>
                     <button type="button" id="gender-female" class="toggle-btn" onclick="selectGender('Девушка')">Девушка</button>
                 </div>
                 <input type="hidden" id="reg-gender" value="Парень">
-
                 <div class="about-label" style="margin-top: 10px;">Город</div>
-                <input type="text" id="city-search" placeholder="Начните вводить город..." class="profile-input-search" oninput="filterCities()" onclick="showCityList()">
-                <div id="city-dropdown" class="city-dropdown-list hidden"></div>
-                <input type="hidden" id="reg-city" value="">
+                <input type="text" id="city-search" placeholder="Введите ваш город..." class="profile-input-search">
             </div>
-            
             <div class="about-label">Цель знакомства</div>
             <div class="toggle-container">
                 <button type="button" id="target-long" class="toggle-btn active" onclick="selectTarget('Длительное общение')">Длительное общение</button>
                 <button type="button" id="target-short" class="toggle-btn" onclick="selectTarget('На одну ночь')">На одну ночь</button>
             </div>
             <input type="hidden" id="reg-target" value="Длительное общение">
-
             <div class="about-label" style="margin-top: 15px;">О себе</div>
             <textarea id="reg-bio" placeholder="Расскажите о себе и своих интересах..." rows="3" class="profile-textarea"></textarea>
-            
             <div class="about-label" style="margin-top: 15px;">Фотография профиля</div>
             <div class="photo-grid">
                 <div id="photo-preview" class="photo-box text-muted">НЕТ ФОТО</div>
@@ -53,12 +55,11 @@
                 </label>
             </div>
             <input type="hidden" id="reg-photo-base64" value="">
-            
             <button onclick="saveAndShowProfile()" class="btn-purple uppercase">Сохранить анкету</button>
         </div>
     </div>
 
-    <!-- ЭКРАН 2: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ ИЛИ СВОЙ ПРОФИЛЬ (ПРОСМОТР) -->
+    <!-- ЭКРАН 3: ПРОСМОТР ПРОФИЛЯ -->
     <div id="screen-view" class="screen screen-profile hidden">
         <div class="profile-header">
             <div class="header-logo-title">Cherry Club 🍒</div>
@@ -68,16 +69,12 @@
             <h2 id="view-name" class="profile-title">Имя, Возраст</h2>
             <p id="view-gender-city" class="profile-sub">Пол • Город</p>
             <p id="view-target" class="profile-target-tag">Цель: Длительное общение</p>
-            
             <div class="about-label">О себе</div>
             <p id="view-bio" class="view-bio-text">Описание анкеты...</p>
-            
-            <div id="view-actions-container">
-                <!-- Сюда JS подставит нужные кнопки -->
-            </div>
+            <div id="view-actions-container"></div>
         </div>
     </div>
 
-    <script src="app.js?v=8"></script>
+    <script src="app.js?v=9"></script>
 </body>
 </html>
