@@ -1,74 +1,69 @@
-// Колода импортированных анкет для свайпов
-let swipeDeck = [];
-let currentSwipeIndex = 0;
+let touchStartX = 0, touchStartY = 0, swipeDeck = [], currentSwipeIndex = 0;
 
-// Сохранение чужой анкеты в локальную колоду свайпов
-function importToSwipeDeck(encodedData) {
-    if (!encodedData) return;
+// НА ТЕЛЕФОНЕ ХВАТАЕМ ВСЕ СВАЙПЫ НАПРЯМУЮ ЧЕРЕЗ ОКНО БРАУЗЕРА
+window.addEventListener("touchstart", function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+window.addEventListener("touchend", function(e) {
+    const diffX = touchStartX - e.changedTouches[0].screenX;
+    const diffY = touchStartY - e.changedTouches[0].screenY;
     
-    let savedDeck = localStorage.getItem("cherry_swipe_deck");
-    swipeDeck = savedDeck ? JSON.parse(savedDeck) : [];
-    
-    // Проверяем, нет ли уже этой анкеты в колоде, чтобы не дублировать
-    if (!swipeDeck.includes(encodedData)) {
-        swipeDeck.push(encodedData);
-        localStorage.setItem("cherry_swipe_deck", JSON.stringify(swipeDeck));
+    // Проверяем, что это был именно горизонтальный свайп, а не вертикальный скролл
+    if (Math.abs(diffX) > 50 && Math.abs(diffY) < 40) {
+        if (typeof isOwnProfile !== "undefined" && isOwnProfile) {
+            if (diffX > 0) { startSwipeMode(); } // Свайп влево на своем профиле -> открыть ленту
+        } else {
+            if (diffX > 0) { handleDislike(); } // Свайп влево в ленте -> дизлайк
+            else if (diffX < 0) { handleLike(); } // Свайп вправо в ленте -> лайк
+        }
     }
-}
+}, { passive: true });
 
-// Запуск режима просмотра колоды свайпов
 function startSwipeMode() {
-    let savedDeck = localStorage.getItem("cherry_swipe_deck");
-    swipeDeck = savedDeck ? JSON.parse(savedDeck) : [];
-    
+    if (typeof globalCherryDatabase === "undefined" || globalCherryDatabase.length === 0) return alert("База анкет пуста.");
+    const savedOwn = localStorage.getItem("cherry_profile_data");
+    let ownGender = "Парень", ownCity = "";
+    if (savedOwn) {
+        try {
+            const decoded = decodeURIComponent(atob(savedOwn).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
+            const p = new URLSearchParams(decoded);
+            ownGender = p.get("gender") || "Парень"; ownCity = p.get("city") || "";
+        } catch(e) {}
+    }
+    swipeDeck = [];
+    globalCherryDatabase.forEach(enc => {
+        try {
+            const decoded = decodeURIComponent(atob(enc).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
+            const prof = new URLSearchParams(decoded);
+            if (prof.get("gender") !== ownGender && prof.get("city") === ownCity) swipeDeck.push(enc);
+        } catch(e) {}
+    });
     if (swipeDeck.length === 0) {
-        alert("Твоя колода свайпов пуста!\n\nПереходи по ссылкам других участников в чатах и каналах Cherry Club, чтобы они автоматически добавились сюда для свайпов.");
-        return;
+        globalCherryDatabase.forEach(enc => {
+            try {
+                const decoded = decodeURIComponent(atob(enc).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
+                const prof = new URLSearchParams(decoded);
+                if (prof.get("gender") !== ownGender) swipeDeck.push(enc);
+            } catch(e) {}
+        });
     }
-    
-    isOwnProfile = false; // Переключаем в режим просмотра чужих анкет
-    currentSwipeIndex = 0;
-    loadNextSwipeCard();
+    swipeDeck.sort(() => Math.random() - 0.5);
+    if (swipeDeck.length === 0) return alert("Подходящих анкет пока нет.");
+    isOwnProfile = false; currentSwipeIndex = 0; loadNextSwipeCard();
 }
 
-// Загрузка следующей анкеты на экран
 function loadNextSwipeCard() {
-    if (currentSwipeIndex >= swipeDeck.length) {
-        alert("Ты просмотрел все доступные анкеты в колоде! Добавляй новые анкеты, кликая по ссылкам участников.");
-        // Возвращаем на свой профиль или экран авторизации
-        location.reload();
-        return;
-    }
-    
-    const encodedData = swipeDeck[currentSwipeIndex];
-    showViewScreen(encodedData);
+    if (currentSwipeIndex >= swipeDeck.length) { alert("Вы посмотрели все анкеты в ленте!"); location.reload(); return; }
+    showViewScreen(swipeDeck[currentSwipeIndex]);
 }
-
-// Действие при клике на Крестик (Дизлайк)
-function handleDislike() {
-    currentSwipeIndex++;
-    loadNextSwipeCard();
-}
-
-// Действие при клике на Галочку (Лайк)
+function handleDislike() { currentSwipeIndex++; loadNextSwipeCard(); }
 function handleLike() {
-    // Получаем текущую анкету, чтобы узнать юзернейм для связи
     try {
-        const encodedData = swipeDeck[currentSwipeIndex];
-        const decoded = decodeURIComponent(atob(encodedData).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
-        const p = new URLSearchParams(decoded);
-        const username = p.get("user");
-        
-        alert("Взаимность! Вы поставили лайк. Открываем чат с пользователем.");
-        
-        // Перенаправляем в ЛС к человеку
-        window.open("https://t.me" + username, "_blank");
-        
-        // Переходим к следующей карте
-        currentSwipeIndex++;
-        loadNextSwipeCard();
-    } catch(e) {
-        currentSwipeIndex++;
-        loadNextSwipeCard();
-    }
+        const decoded = decodeURIComponent(atob(swipeDeck[currentSwipeIndex]).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
+        const p = new URLSearchParams(decoded); alert("Взаимность! Открываем чат 🍒");
+        if (tg && tg.openTelegramLink) tg.openTelegramLink("https://t.me" + p.get("user")); else window.open("https://t.me" + p.get("user"), "_blank");
+        currentSwipeIndex++; loadNextSwipeCard();
+    } catch(e) { currentSwipeIndex++; loadNextSwipeCard(); }
 }
