@@ -4,20 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="style.css?v=13">
     <script src="https://telegram.org"></script>
-    <script src="cities.js?v=12"></script>
+    <script src="cities.js?v=13"></script>
 </head>
 <body>
 
     <!-- ЭКРАН 1: ВХОД / РЕГИСТРАЦИЯ -->
     <div id="screen-auth" class="screen screen-profile" style="background: linear-gradient(to bottom, #621244, #3a0525); justify-content: center; align-items: center; padding-top: 0;">
-        <h1 style="color:#ffffff; font-size: 32px; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 40px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Cherry Club 🍒</h1>
+        <h1 style="color:#ffffff; font-size: 32px; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Cherry Club 🍒</h1>
         <div style="width: 85%; display: flex; flex-direction: column; gap: 15px;">
             <button onclick="authAction('login')" class="btn-pink uppercase" style="margin: 0; width: 100%;">Войти в профиль</button>
             <button onclick="authAction('register')" class="btn-purple uppercase" style="margin: 0; width: 100%; background: #ffffff; color: #621244;">Регистрация</button>
+            <!-- КНОПКА НАЗАД В КОНЦЕ МЕНЮ -->
+            <button onclick="closeApp()" class="btn-purple uppercase" style="margin: 0; width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.4); color: #ffffff; box-shadow: none;">Назад</button>
         </div>
-        <p style="font-size: 11px; opacity: 0.6; margin-top: 30px; padding: 0 20px; text-align: center;">Клуб знакомств без хранения данных на серверах</p>
+        
+        <!-- ПУБЛИЧНАЯ ОФЕРТА 18+ И ОПИСАНИЕ -->
+        <div style="width: 85%; text-align: center; margin-top: 25px; display: flex; flex-direction: column; gap: 10px;">
+            <p style="font-size: 11px; opacity: 0.8; color: #fce7f3; margin: 0; line-height: 1.4;">Нажимая кнопку «Регистрация», вы подтверждаете, что вам исполнилось 18 лет.</p>
+            <p style="font-size: 10px; opacity: 0.4; color: #fce7f3; margin: 0;">Клуб знакомств без хранения данных на серверах</p>
+        </div>
     </div>
 
     <!-- ЭКРАН 2: СОЗДАНИЕ АНКЕТЫ -->
@@ -70,14 +77,11 @@
             <div id="view-avatar-circle" class="avatar-circle">👤</div>
         </div>
         <div class="profile-body">
-            
-            <!-- КНОПКА ТРИ ТОЧКИ И МЕНЮ (НАХОДЯТСЯ ВНУТРИ ТЕЛА КАРТОЧКИ) -->
             <button id="dots-menu-btn" onclick="toggleDotsMenu(event)" class="dots-btn hidden">⋮</button>
             <div id="dots-dropdown" class="dots-dropdown-menu hidden">
                 <div onclick="back()" class="dropdown-item">✏️ Редактировать</div>
                 <div onclick="deleteOwnProfile()" class="dropdown-item delete-item">✕ Удалить анкету</div>
             </div>
-
             <h2 id="view-name" class="profile-title" style="padding-right: 40px;">Имя, Возраст</h2>
             <p id="view-gender-city" class="profile-sub">Пол • Город</p>
             <p id="view-target" class="profile-target-tag">Цель: Длительное общение</p>
@@ -87,6 +91,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=13"></script>
 </body>
 </html>
