@@ -20,7 +20,7 @@ function init() {
     renderCityList();
     
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('.form-group')) {
+        if (!e.target.closest('.form-group-vertical')) {
             hideCityList();
         }
     });
@@ -54,7 +54,6 @@ function filterCities() {
     const value = document.getElementById('city-search').value.toLowerCase();
     const items = document.querySelectorAll('.city-item');
     let hasResults = false;
-    
     items.forEach(item => {
         if (item.innerText.toLowerCase().includes(value)) {
             item.style.display = 'block';
@@ -63,7 +62,6 @@ function filterCities() {
             item.style.display = 'none';
         }
     });
-    
     if (hasResults) showCityList();
     else hideCityList();
 }
@@ -72,6 +70,17 @@ function selectCity(city) {
     document.getElementById('city-search').value = city;
     document.getElementById('reg-city').value = city;
     hideCityList();
+}
+
+function selectGender(genderValue) {
+    document.getElementById('reg-gender').value = genderValue;
+    if (genderValue === 'Парень') {
+        document.getElementById('gender-male').classList.add('active');
+        document.getElementById('gender-female').classList.remove('active');
+    } else {
+        document.getElementById('gender-female').classList.add('active');
+        document.getElementById('gender-male').classList.remove('active');
+    }
 }
 
 function selectTarget(targetValue) {
@@ -85,6 +94,38 @@ function selectTarget(targetValue) {
     }
 }
 
+// ОБРАБОТКА И СЖАТИЕ ФОТО ДЛЯ ССЫЛКИ
+function handlePhotoUpload(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                // Создаем холст для экстремального сжатия фото ради экономии места в ссылке
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 150;
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Переводим в сжатый base64 JPEG
+                const base64Data = canvas.toDataURL('image/jpeg', 0.5);
+                document.getElementById('reg-photo-base64').value = base64Data;
+                
+                // Рисуем превью в окне приложения
+                const preview = document.getElementById('photo-preview');
+                preview.innerText = '';
+                preview.style.backgroundImage = `url(${base64Data})`;
+            };
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 function showViewScreen(encodedData) {
     try {
         const decodedString = decodeURIComponent(atob(encodedData).split('').map(function(c) {
@@ -93,10 +134,21 @@ function showViewScreen(encodedData) {
         const params = new URLSearchParams(decodedString);
         
         document.getElementById('view-name').innerText = params.get('name') + ", " + params.get('age');
-        document.getElementById('view-city').innerText = params.get('city');
+        document.getElementById('view-gender-city').innerText = params.get('gender') + " • " + params.get('city');
         document.getElementById('view-target').innerText = "Цель: " + params.get('target');
         document.getElementById('view-bio').innerText = params.get('bio');
         document.getElementById('view-chat-btn').href = "https://t.me" + params.get('user');
+        
+        // Подгружаем фото аватара, если оно передано по ссылке
+        const photoData = params.get('photo');
+        const avatarCircle = document.getElementById('view-avatar-circle');
+        if (photoData && photoData.startsWith('data:image')) {
+            avatarCircle.innerText = '';
+            avatarCircle.style.backgroundImage = `url(${photoData})`;
+        } else {
+            avatarCircle.innerText = params.get('gender') === 'Девушка' ? '💃' : '🤵';
+            avatarCircle.style.backgroundImage = 'none';
+        }
         
         document.getElementById('screen-view').classList.remove('hidden');
     } catch (e) {
@@ -108,20 +160,27 @@ function showViewScreen(encodedData) {
 function shareProfile() {
     const name = document.getElementById('reg-name').value.trim();
     const age = document.getElementById('reg-age').value.trim();
+    const gender = document.getElementById('reg-gender').value;
     const city = document.getElementById('reg-city').value; 
     const target = document.getElementById('reg-target').value;
     const bio = document.getElementById('reg-bio').value.trim();
+    const photo = document.getElementById('reg-photo-base64').value;
     const username = tg?.initDataUnsafe?.user?.username || "test_user";
 
     if (!name || !age || !city || !bio) { return alert("Заполните имя, возраст, выберите город из списка и заполните описание!"); }
 
-    const profileString = `name=${encodeURIComponent(name)}&age=${encodeURIComponent(age)}&city=${encodeURIComponent(city)}&target=${encodeURIComponent(target)}&bio=${encodeURIComponent(bio)}&user=${username}`;
+    // Собираем все параметры
+    let profileString = `name=${encodeURIComponent(name)}&age=${encodeURIComponent(age)}&gender=${encodeURIComponent(gender)}&city=${encodeURIComponent(city)}&target=${encodeURIComponent(target)}&bio=${encodeURIComponent(bio)}&user=${username}`;
+    if (photo) {
+        profileString += `&photo=${encodeURIComponent(photo)}`;
+    }
+
     const encodedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
         return String.fromCharCode('0x' + p1);
     }));
 
     const appLink = `https://t.me${BOT_USERNAME}/app?startapp=${encodedData}`;
-    const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: ${name}, ${age} лет\n📍 Город: ${city}\n🎯 Цель: ${target}\n📝 О себе: ${bio}\n\n🔗 Смотреть анкету: ${appLink}`;
+    const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: ${name}, ${age} лет (${gender})\n📍 Город: ${city}\n🎯 Цель: ${target}\n📝 О себе: ${bio}\n\n🔗 Смотреть анкету и фото: ${appLink}`;
 
     const finalTelegramUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
 
