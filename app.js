@@ -10,7 +10,7 @@ function init() {
     });
     const urlParams = new URLSearchParams(window.location.search);
     let enc = urlParams.get("tgWebAppStartParam") || urlParams.get("startapp");
-    if (enc) { isOwnProfile = false; if (typeof importToSwipeDeck === "function") importToSwipeDeck(enc); document.getElementById("screen-auth").classList.add("hidden"); showViewScreen(enc); }
+    if (enc) { isOwnProfile = false; document.getElementById("screen-auth").classList.add("hidden"); showViewScreen(enc); }
 }
 
 function authAction(type) {
@@ -44,7 +44,7 @@ function selectGender(v) { document.getElementById("reg-gender").value = v; docu
 function selectTarget(v) { document.getElementById("reg-target").value = v; document.getElementById("target-long").classList.toggle("active", v === "Длительное общение"); document.getElementById("target-short").classList.toggle("active", v === "На одну ночь"); }
 
 function handlePhotoUpload(input) {
-    if (input.files && input.files[0]) {
+    if (input.files && input.files) {
         const reader = new FileReader(); reader.onload = function(e) {
             const img = new Image(); img.src = e.target.result; img.onload = function() {
                 const canvas = document.createElement("canvas"); canvas.width = 150; canvas.height = img.height * (150 / img.width);
@@ -52,7 +52,7 @@ function handlePhotoUpload(input) {
                 const b64 = canvas.toDataURL("image/jpeg", 0.5); document.getElementById("reg-photo-base64").value = b64;
                 const p = document.getElementById("photo-preview"); if (p) { p.innerText = ""; p.style.backgroundImage = "url('" + b64 + "')"; }
             };
-        }; reader.readAsDataURL(input.files[0]);
+        }; reader.readAsDataURL(input.files);
     }
 }
 
@@ -84,16 +84,15 @@ function showViewScreen(encodedData) {
             if (photo && photo.startsWith("data:image")) { avatar.innerText = ""; avatar.style.backgroundImage = "url('" + photo + "')"; }
             else { avatar.innerText = p.get("gender") === "Девушка" ? "💃" : "🤵"; avatar.style.backgroundImage = "none"; }
         }
-        const dotsBtn = document.getElementById("dots-menu-btn"), cont = document.getElementById("view-actions-container"), sb = document.getElementById("swipe-buttons-container");
+        const dotsBtn = document.getElementById("dots-menu-btn"), cont = document.getElementById("view-actions-container"), sb = document.getElementById("swipe-buttons-container"), hint = document.getElementById("swipe-hint");
         if (cont) {
             cont.innerHTML = "";
             if (isOwnProfile) {
-                if (dotsBtn) dotsBtn.classList.remove("hidden"); if (sb) sb.classList.add("hidden");
-                cont.innerHTML = '<button onclick="shareLink()" class="btn-pink uppercase">Поделиться профилем 🍒</button><button onclick="startSwipeMode()" class="btn-pink uppercase" style="background:#e31b6d;">Смотреть ленту 🍒</button><button onclick="sendMod()" class="btn-purple" style="background:#621244">Получить галочку 🛡️</button>';
+                if (dotsBtn) dotsBtn.classList.remove("hidden"); if (sb) sb.classList.add("hidden"); if (hint) hint.style.display = "block";
+                cont.innerHTML = '<button onclick="shareLink()" class="btn-pink uppercase">Поделиться профилем 🍒</button><button onclick="sendMod()" class="btn-purple" style="background:#621244">Получить галочку 🛡️</button>';
             } else {
-                if (dotsBtn) dotsBtn.classList.add("hidden");
-                if (sb && !sb.classList.contains("hidden")) cont.innerHTML = "";
-                else if (sb) sb.classList.remove("hidden");
+                if (dotsBtn) dotsBtn.classList.add("hidden"); if (hint) hint.style.display = "none";
+                if (sb) sb.classList.remove("hidden");
             }
         }
         document.getElementById("screen-view").classList.remove("hidden");
@@ -102,7 +101,7 @@ function showViewScreen(encodedData) {
 
 function deleteOwnProfile() {
     if (confirm("Удалить анкету? Это сотрет все данные.")) {
-        localStorage.removeItem("cherry_profile_data"); localStorage.removeItem("cherry_swipe_deck"); alert("Удалено!");
+        localStorage.removeItem("cherry_profile_data"); alert("Удалено!");
         document.getElementById("screen-view").classList.add("hidden"); document.getElementById("screen-auth").classList.remove("hidden");
     }
 }
