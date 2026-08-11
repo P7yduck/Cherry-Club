@@ -8,7 +8,33 @@ let currentGeneratedData = "", isOwnProfile = true;
 function init() {
     const urlParams = new URLSearchParams(window.location.search);
     let encodedData = urlParams.get("tgWebAppStartParam") || urlParams.get("startapp");
-    if (encodedData) { isOwnProfile = false; showViewScreen(encodedData); }
+    
+    if (encodedData) {
+        // Если перешли по ссылке на ЧУЖУЮ анкету, сразу открываем её без экранов входа
+        isOwnProfile = false;
+        document.getElementById("screen-auth").classList.add("hidden");
+        showViewScreen(encodedData);
+    } else {
+        // Если открыли свое приложение, экран входа уже виден по умолчанию
+        isOwnProfile = true;
+    }
+}
+
+function authAction(type) {
+    const savedData = localStorage.getItem("cherry_profile_data");
+    
+    if (type === "login") {
+        if (savedData) {
+            // Если анкета сохранена в телефоне — пускаем в просмотр профиля
+            document.getElementById("screen-auth").classList.add("hidden");
+            showViewScreen(savedData);
+        } else {
+            alert("У вас еще нет созданной анкеты на этом устройстве! Пожалуйста, пройдите регистрацию.");
+        }
+    } else if (type === "register") {
+        document.getElementById("screen-auth").classList.add("hidden");
+        document.getElementById("screen-register").classList.remove("hidden");
+    }
 }
 
 function selectGender(val) {
@@ -59,6 +85,10 @@ function saveAndShowProfile() {
     if (photo) str += "&photo=" + encodeURIComponent(photo);
 
     currentGeneratedData = btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m, p) => String.fromCharCode("0x" + p)));
+    
+    // Сохраняем анкету в память телефона локально
+    localStorage.setItem("cherry_profile_data", currentGeneratedData);
+    
     document.getElementById("screen-register").classList.add("hidden");
     showViewScreen(currentGeneratedData);
 }
@@ -84,7 +114,8 @@ function showViewScreen(encodedData) {
         const cont = document.getElementById("view-actions-container");
         if (cont) {
             if (isOwnProfile) {
-                cont.innerHTML = '<button onclick="shareLink()" class="btn-pink uppercase">Поделиться профилем 🍒</button><button onclick="sendMod()" class="btn-purple" style="background:#621244">Получить галочку 🛡️</button><button onclick="back()" class="btn-purple" style="background:#8e8e8e">Редактировать</button>';
+                // Добавлена кнопка «Удалить анкету» с красным бэкграундом
+                cont.innerHTML = '<button onclick="shareLink()" class="btn-pink uppercase">Поделиться профилем 🍒</button><button onclick="sendMod()" class="btn-purple" style="background:#621244">Получить галочку 🛡️</button><button onclick="back()" class="btn-purple" style="background:#8e8e8e">Редактировать</button><button onclick="deleteOwnProfile()" class="btn-purple" style="background:#b91c1c; color:white; margin-top: 20px;">Удалить анкету ✕</button>';
             } else {
                 cont.innerHTML = '<a href="https://t.me' + p.get("user") + '" target="_blank" class="btn-pink uppercase" style="text-decoration:none; text-align:center; display:block; line-height:24px;">Написать в ЛС</a>';
             }
@@ -93,19 +124,29 @@ function showViewScreen(encodedData) {
     } catch (e) { alert("Ошибка профиля."); document.getElementById("screen-register").classList.remove("hidden"); }
 }
 
+function deleteOwnProfile() {
+    if (confirm("Вы уверены, что хотите полностью удалить свою анкету? Это действие сотрет все данные на вашем устройстве.")) {
+        localStorage.removeItem("cherry_profile_data");
+        alert("Ваша анкета успешно удалена из памяти вашего телефона!");
+        // Перенаправляем обратно на экран входа/регистрации
+        document.getElementById("screen-view").classList.add("hidden");
+        document.getElementById("screen-auth").classList.remove("hidden");
+    }
+}
+
 function back() { document.getElementById("screen-view").classList.add("hidden"); document.getElementById("screen-register").classList.remove("hidden"); }
 
 function shareLink() {
     const link = "https://t.me" + BOT_USERNAME + "/app?startapp=" + currentGeneratedData;
     const url = "https://t.meshare/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent("🍒 Моя анкета в Cherry Club:");
-    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, "_blank");
+    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, '_blank');
 }
 
 function sendMod() {
     const link = "https://t.me" + BOT_USERNAME + "/app?startapp=" + currentGeneratedData;
     const txt = "🍒 ЗАЯВКА НА ВЕРИФИКАЦИЮ:\n\n🔗 Проверить анкету: " + link + "\n\n⚠️ ВНИМАНИЕ: Запишите видео-кружочек СЛЕДУЮЩИМ сообщением в чат!";
     const url = "https://t.meshare/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent(txt);
-    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, "_blank");
+    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, '_blank');
     alert("Отправьте текст в Чат Модерации (" + MODERATION_CHAT + "), а СЛЕДУЮЩИМ сообщением запишите кружочек!");
 }
 
