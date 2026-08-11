@@ -17,7 +17,18 @@ function init() {
 
     const urlParams = new URLSearchParams(window.location.search);
     let encodedData = urlParams.get("tgWebAppStartParam") || urlParams.get("startapp");
-    if (encodedData) { isOwnProfile = false; document.getElementById("screen-auth").classList.add("hidden"); showViewScreen(encodedData); }
+    
+    if (encodedData) {
+        // Человек перешел по ЧУЖОЙ ссылке — импортируем её в его колоду свайпов
+        isOwnProfile = false;
+        if (typeof importToSwipeDeck === "function") {
+            importToSwipeDeck(encodedData);
+        }
+        document.getElementById("screen-auth").classList.add("hidden");
+        showViewScreen(encodedData);
+    } else {
+        isOwnProfile = true;
+    }
 }
 
 function authAction(type) {
@@ -28,15 +39,6 @@ function authAction(type) {
     } else if (type === "register") {
         document.getElementById("screen-auth").classList.add("hidden");
         document.getElementById("screen-register").classList.remove("hidden");
-    }
-}
-
-// НАВАТНАЯ ФУНКЦИЯ ЗАКРЫТИЯ ПРИЛОЖЕНИЯ
-function closeApp() {
-    if (tg && tg.close) {
-        tg.close();
-    } else {
-        window.close();
     }
 }
 
@@ -143,14 +145,26 @@ function showViewScreen(encodedData) {
         
         const dotsBtn = document.getElementById("dots-menu-btn");
         const cont = document.getElementById("view-actions-container");
+        const swipeButtons = document.getElementById("swipe-buttons-container");
+        
         if (cont) {
             cont.innerHTML = "";
             if (isOwnProfile) {
                 if (dotsBtn) dotsBtn.classList.remove("hidden");
-                cont.innerHTML = '<button onclick="shareLink()" class="btn-pink uppercase">Поделиться профилем 🍒</button><button onclick="sendMod()" class="btn-purple" style="background:#621244">Получить галочку 🛡️</button>';
+                if (swipeButtons) swipeButtons.classList.add("hidden"); // Скрываем крестик и галочку на СВОЕМ профиле
+                
+                // Добавлена кнопка «Смотреть ленту» для запуска режима свайпов сохраненных анкет
+                cont.innerHTML = '<button onclick="shareLink()" class="btn-pink uppercase">Поделиться профилем 🍒</button><button onclick="startSwipeMode()" class="btn-pink uppercase" style="background:#e31b6d;">Смотреть ленту 🍒</button><button onclick="sendMod()" class="btn-purple" style="background:#621244">Получить галочку 🛡️</button>';
             } else {
                 if (dotsBtn) dotsBtn.classList.add("hidden");
-                cont.innerHTML = '<a href="https://t.me' + p.get("user") + '" target="_blank" class="btn-pink uppercase" style="text-decoration:none; text-align:center; display:block; line-height:24px;">Написать в ЛС</a>';
+                
+                // Если мы находимся в режиме ЛЕНТЫ (активны кнопки свайпов), скрываем текстовую кнопку «Написать»
+                if (swipeButtons && !swipeButtons.classList.contains("hidden")) {
+                    cont.innerHTML = "";
+                } else {
+                    // Если открыли анкету по прямой ссылке в первый раз, показываем кнопку перехода в ЛС
+                    if (swipeButtons) swipeButtons.classList.remove("hidden"); // Включаем кнопки крестика и галочки под картой
+                }
             }
         }
         document.getElementById("screen-view").classList.remove("hidden");
@@ -159,7 +173,7 @@ function showViewScreen(encodedData) {
 
 function deleteOwnProfile() {
     if (confirm("Вы уверены, что хотите полностью удалить свою анкету? Это действие сотрет все данные на вашем устройстве.")) {
-        localStorage.removeItem("cherry_profile_data"); alert("Ваша анкету успешно удалена!");
+        localStorage.removeItem("cherry_profile_data"); localStorage.removeItem("cherry_swipe_deck"); alert("Ваша анкету успешно удалена!");
         document.getElementById("screen-view").classList.add("hidden"); document.getElementById("screen-auth").classList.remove("hidden");
     }
 }
@@ -167,16 +181,8 @@ function back() { document.getElementById("screen-view").classList.add("hidden")
 
 function shareLink() {
     const link = "https://t.me" + BOT_USERNAME + "/app?startapp=" + currentGeneratedData;
-    const url = "https://t.meshare/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent("🍒 Моя анкету в Cherry Club:");
+    const url = "https://t.meshare/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent("🍒 Моя анкета в Cherry Club:");
     if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, '_blank');
 }
 
 function sendMod() {
-    const link = "https://t.me" + BOT_USERNAME + "/app?startapp=" + currentGeneratedData;
-    const txt = "🍒 ЗАЯВКА НА ВЕРИФИКАЦИЮ:\n\n🔗 Проверить анкету: " + link + "\n\n⚠️ ВНИМАНИЕ: Запишите видео-кружочек СЛЕДУЮЩИМ сообщением в чат!";
-    const url = "https://t.meshare/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent(txt);
-    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, '_blank');
-    alert("Отправьте текст в Чат Модерации, а СЛЕДУЮЩИМ сообщением запишите кружочек!");
-}
-
-init();
