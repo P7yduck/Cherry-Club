@@ -14,14 +14,25 @@ body, html { margin: 0; padding: 0; background-color: #621244; color: #ffffff; m
 .profile-header { background-color: #621244; height: 22vh; min-height: 130px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 20px; position: relative; }
 .header-logo-title { font-size: 28px; font-weight: 900; letter-spacing: 2px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.3); font-family: 'Georgia', serif; font-style: italic; }
 .avatar-circle { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #ffffff; background-color: #f3e5f5; display: flex; justify-content: center; align-items: center; font-size: 45px; position: absolute; bottom: -40px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 10; background-size: cover; background-position: center; overflow: hidden; }
-.profile-body { background-color: #ffffff; color: #4a154b; flex-grow: 1; padding: 55px 25px 20px 25px; display: flex; flex-direction: column; border-top-left-radius: 25px; border-top-right-radius: 25px; }
+.profile-body { background-color: #ffffff; color: #4a154b; flex-grow: 1; padding: 55px 25px 20px 25px; display: flex; flex-direction: column; border-top-left-radius: 25px; border-top-right-radius: 25px; position: relative; }
+
+/* ИСПРАВЛЕННАЯ КРУГЛАЯ КНОПКА НАСТРОЕК (ТРИ ТОЧКИ) */
+.dots-btn { position: absolute; top: 20px; right: 20px; width: 36px; height: 36px; background-color: #621244; border: none; color: #ffffff; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15); outline: none; padding: 0; margin: 0; z-index: 50; line-height: 1; }
+.dots-btn:active { background-color: #4a154b; }
+
+/* ИСПРАВЛЕННОЕ ВЫПАДАЮЩЕЕ МЕНЮ СПРАВА */
+.dots-dropdown-menu { position: absolute; top: 62px; right: 20px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 180px; z-index: 100; overflow: hidden; display: flex; flex-direction: column; }
+.dropdown-item { padding: 12px 16px; font-size: 14px; color: #4a154b; cursor: pointer; text-align: left; transition: background 0.2s ease; font-weight: 500; width: 100%; border: none; background: transparent; }
+.dropdown-item:hover { background: #fdf2f8; color: #621244; }
+.dropdown-item.delete-item { color: #b91c1c; border-top: 1px solid #f1f5f9; }
+.dropdown-item.delete-item:hover { background: #fef2f2; }
 
 /* ВЕРТИКАЛЬНАЯ ФОРМА */
 .form-group-vertical { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; width: 100%; position: relative; }
 .profile-input-line { width: 100%; border: none; border-bottom: 2px solid #621244; font-size: 18px; font-weight: bold; color: #4a154b; outline: none; padding: 8px; text-align: left; background: transparent; }
 .profile-input-search { width: 100%; border: 1px solid #e0e0e0; border-radius: 10px; text-align: left; font-size: 14px; color: #4a154b; outline: none; padding: 10px; background: #fafafa; }
 
-/* ПЕРЕКЛЮЧАТЕЛИ (ОБЩИЙ СТИЛЬ ДЛЯ ПОЛА И ЦЕЛИ) */
+/* ПЕРЕКЛЮЧАТЕЛИ */
 .toggle-container { display: flex; gap: 10px; width: 100%; margin: 5px 0 10px 0; }
 .toggle-btn { flex: 1; border: 1px solid #621244; background: white; color: #621244; padding: 10px; border-radius: 15px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; outline: none; text-align: center; }
 .toggle-btn.active { background: #621244; color: white; box-shadow: 0 2px 6px rgba(98, 18, 68, 0.3); }
