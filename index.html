@@ -2,118 +2,64 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <style>
-        body { background-color: #1a050d; color: #fce7f3; font-family: sans-serif; padding: 15px; margin: 0; box-sizing: border-box; text-align: center; }
-        .btn { background: linear-gradient(135deg, #881337 0%, #4c0519 100%); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; display: block; box-sizing: border-box; text-decoration: none; }
-        .input { width: 100%; background-color: #2e0814; border: 1px solid #881337; padding: 10px; border-radius: 8px; color: white; margin-bottom: 12px; box-sizing: border-box; }
-        .banner { background: #3b0712; border: 1px solid #f43f5e; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; text-align: left; }
-        .card { background: #2e0814; border: 1px solid #881337; padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; }
-    </style>
+    <link rel="stylesheet" href="style.css?v=1">
+    <script src="https://telegram.org"></script>
 </head>
 <body>
 
-    <h1 style="color:#f43f5e; margin-bottom: 25px;">CHERRY CLUB 🍒</h1>
-
-    <!-- БАННЕР БЕЗОПАСНОСТИ -->
-    <div class="banner">
-        <strong>🛡️ Совет по безопасности:</strong>
-        <p style="margin: 5px 0 0 0;">Встречайтесь только в людных местах и на нейтральной территории. Никогда не переводите деньги мошенникам!</p>
-    </div>
-
-    <!-- ЭКРАН РЕГИСТРАЦИИ -->
-    <div id="screen-register">
-        <h3 style="margin-top:0; text-align: left;">Создай анкету</h3>
-        <input type="text" id="reg-name" placeholder="Имя" class="input">
-        <input type="number" id="reg-age" placeholder="Возраст" class="input">
-        <input type="text" id="reg-city" placeholder="Город" class="input">
-        <textarea id="reg-bio" placeholder="О себе..." rows="3" class="input" style="resize:none;"></textarea>
-        
-        <p style="font-size:12px; color:#f43f5e; margin: 15px 0 5px 0;">📹 Потребуется видео-верификация кружочком!</p>
-        <button onclick="shareProfile()" class="btn">Опубликовать анкету</button>
-    </div>
-
-    <!-- ЭКРАН ПРОСМОТРА (СКРЫТ ПО УМОЛЧАНИЮ) -->
-    <div id="screen-view" style="display: none;">
-        <span style="color:#10b981; font-weight:bold; font-size:12px;">🛡️ ПРОФИЛЬ ВЕРИФИЦИРОВАН</span>
-        <div class="card">
-            <h2 id="view-name" style="margin:0;">Имя, Возраст</h2>
-            <p id="view-city" style="color:#f43f5e; margin:5px 0;">Город</p>
-            <p id="view-bio" style="font-style:italic; background:#1a050d; padding:10px; border-radius:8px;">О себе</p>
+    <!-- ЭКРАН 1: СОВПАДЕНИЕ (MATCH) -->
+    <div id="screen-match" class="screen screen-match hidden">
+        <div class="match-title">Coincidence!</div>
+        <div class="heart-container">
+            <div class="heart-avatar bg-left">🤵</div>
+            <div class="heart-avatar bg-right">💃</div>
         </div>
-        <a id="view-chat-btn" href="#" target="_blank" class="btn" style="background:#10b981; margin-top:15px;">💌 Написать в ЛС</a>
+        <button onclick="goToRegister()" class="btn-pink uppercase">Start Chatting</button>
+        <div class="sub-text">Keep on Playing</div>
     </div>
 
-    <script>
-        let tg = null;
-        if (window.Telegram && window.Telegram.WebApp) {
-            tg = window.Telegram.WebApp;
-            tg.ready(); 
-            tg.expand();
-        }
-
-        const BOT_USERNAME = "sweet_cherry_club_bot"; 
-        const MODERATION_CHAT = "https://t.me"; 
-
-        function checkUrlParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let encodedData = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp');
+    <!-- ЭКРАН 2: АНКЕТА / РЕГИСТРАЦИЯ (В стиле профиля) -->
+    <div id="screen-register" class="screen screen-profile hidden">
+        <div class="profile-header">
+            <div class="avatar-circle">🍒</div>
+        </div>
+        <div class="profile-body">
+            <div class="form-group">
+                <input type="text" id="reg-name" placeholder="Account Name, Age" class="profile-input-title">
+                <input type="text" id="reg-city" placeholder="sheffield, england" class="profile-input-sub">
+            </div>
             
-            if (encodedData) {
-                showViewScreen(encodedData);
-            }
-        }
-
-        function showViewScreen(encodedData) {
-            try {
-                const decodedString = decodeURIComponent(atob(encodedData).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                const params = new URLSearchParams(decodedString);
-                
-                document.getElementById('view-name').innerText = params.get('name') + ", " + params.get('age');
-                document.getElementById('view-city').innerText = params.get('city');
-                document.getElementById('view-bio').innerText = "«" + params.get('bio') + "»";
-                document.getElementById('view-chat-btn').href = "https://t.me" + params.get('user');
-                
-                document.getElementById('screen-register').style.display = 'none';
-                document.getElementById('screen-view').style.display = 'block';
-            } catch (e) {
-                alert("Ошибка загрузки профиля.");
-            }
-        }
-
-        function shareProfile() {
-            const name = document.getElementById('reg-name').value.trim();
-            const age = document.getElementById('reg-age').value.trim();
-            const city = document.getElementById('reg-city').value.trim();
-            const bio = document.getElementById('reg-bio').value.trim();
+            <div class="about-label">About</div>
+            <textarea id="reg-bio" placeholder="Tell something about yourself..." rows="3" class="profile-textarea"></textarea>
             
-            const username = tg?.initDataUnsafe?.user?.username || "test_user";
-
-            if (!name || !age || !city || !bio) { return alert("Заполните все поля!"); }
-
-            const profileString = `name=${name}&age=${age}&city=${city}&bio=${bio}&user=${username}`;
-            const encodedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-                return String.fromCharCode('0x' + p1);
-            }));
-
-            const appLink = "https://t.me" + BOT_USERNAME + "/app?startapp=" + encodedData;
-            const shareText = "🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: " + name + ", " + age + "\n📍 Город: " + city + "\n📝 О себе: " + bio + "\n\n🔗 Профиль: " + appLink + "\n\n⚠️ ВНИМАНИЕ: Запишите видео-кружочек СЛЕДУЮЩИМ сообщением в чат для верификации!";
-
-            const finalTelegramUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
-
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(finalTelegramUrl);
-            } else {
-                window.open(finalTelegramUrl, '_blank');
-            }
+            <div class="photo-grid">
+                <div class="photo-box text-muted">PHOTO</div>
+                <div class="photo-box text-muted">PHOTO</div>
+                <div class="photo-box add-btn">+</div>
+            </div>
             
-            alert("Инструкция:\nОтправьте сгенерированный текст в Чат Модерации (" + MODERATION_CHAT + "), а СЛЕДУЮЩИМ сообщением запишите туда свой видео-кружочек.");
-        }
+            <button onclick="shareProfile()" class="btn-purple uppercase">Save & Publish</button>
+        </div>
+    </div>
 
-        checkUrlParams();
-    </script>
+    <!-- ЭКРАН 3: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ (РЕЖИМ ПРОСМОТРА) -->
+    <div id="screen-view" class="screen screen-profile hidden">
+        <div class="profile-header">
+            <div class="avatar-circle">👤</div>
+        </div>
+        <div class="profile-body">
+            <h2 id="view-name" class="profile-title">Name, Age</h2>
+            <p id="view-city" class="profile-sub">City, Country</p>
+            
+            <div class="about-label">About</div>
+            <p id="view-bio" class="view-bio-text">Bio description...</p>
+            
+            <a id="view-chat-btn" href="#" target="_blank" class="btn-pink uppercase" style="text-decoration:none; text-align:center; display:block; line-height:24px;">Message</a>
+        </div>
+    </div>
+
+    <script src="app.js?v=1"></script>
 </body>
 </html>
