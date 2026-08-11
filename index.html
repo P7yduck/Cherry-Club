@@ -4,19 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=11">
     <script src="https://telegram.org"></script>
+    <!-- ПОДКЛЮЧАЕМ ОТДЕЛЬНЫЙ ФАЙЛ ГОРОДОВ -->
+    <script src="cities.js?v=11"></script>
 </head>
 <body>
 
-    <!-- ЭКРАН 1: ВХОД / РЕГИСТРАЦИЯ (ПРИВЕТСТВЕННЫЙ) -->
-    <div id="screen-auth" class="screen screen-profile" style="background: linear-gradient(to bottom, #621244, #3a0525); justify-content: center; align-items: center; p-top: 0;">
+    <!-- ЭКРАН 1: ВХОД / РЕГИСТРАЦИЯ -->
+    <div id="screen-auth" class="screen screen-profile" style="background: linear-gradient(to bottom, #621244, #3a0525); justify-content: center; align-items: center; padding-top: 0;">
         <h1 style="color:#ffffff; font-size: 32px; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 40px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Cherry Club 🍒</h1>
         <div style="width: 85%; display: flex; flex-direction: column; gap: 15px;">
             <button onclick="authAction('login')" class="btn-pink uppercase" style="margin: 0; width: 100%;">Войти в профиль</button>
             <button onclick="authAction('register')" class="btn-purple uppercase" style="margin: 0; width: 100%; background: #ffffff; color: #621244;">Регистрация</button>
         </div>
-        <p style="font-size: 11px; opacity: 0.6; margin-top: 30px; padding: 0 20px;">Клуб знакомств без хранения данных на серверах</p>
+        <p style="font-size: 11px; opacity: 0.6; margin-top: 30px; padding: 0 20px; text-align: center;">Клуб знакомств без хранения данных на серверах</p>
     </div>
 
     <!-- ЭКРАН 2: СОЗДАНИЕ АНКЕТЫ -->
@@ -28,15 +30,19 @@
         <div class="profile-body">
             <div class="form-group-vertical">
                 <input type="text" id="reg-name" placeholder="Имя" class="profile-input-line">
-                <input type="number" id="reg-age" placeholder="Возраст" class="profile-input-line" min="18" max="99">
+                <input type="number" id="reg-age" placeholder="Возраст (минимальный 18)" class="profile-input-line" min="18" max="99" onchange="validateAgeInput(this)">
                 <div class="about-label" style="margin-top: 10px;">Ваш пол</div>
                 <div class="toggle-container">
                     <button type="button" id="gender-male" class="toggle-btn active" onclick="selectGender('Парень')">Парень</button>
                     <button type="button" id="gender-female" class="toggle-btn" onclick="selectGender('Девушка')">Девушка</button>
                 </div>
                 <input type="hidden" id="reg-gender" value="Парень">
+                
+                <!-- ВОЗВРАЩЕННЫЙ ВЫБОР ГОРОДА С ПОИСКОМ -->
                 <div class="about-label" style="margin-top: 10px;">Город</div>
-                <input type="text" id="city-search" placeholder="Введите ваш город..." class="profile-input-search">
+                <input type="text" id="city-search" placeholder="Начните вводить город..." class="profile-input-search" oninput="filterCities()" onclick="showCityList()">
+                <div id="city-dropdown" class="city-dropdown-list hidden"></div>
+                <input type="hidden" id="reg-city" value="">
             </div>
             <div class="about-label">Цель знакомства</div>
             <div class="toggle-container">
@@ -65,16 +71,21 @@
             <div class="header-logo-title">Cherry Club 🍒</div>
             <div id="view-avatar-circle" class="avatar-circle">👤</div>
         </div>
-        <div class="profile-body">
-            <h2 id="view-name" class="profile-title">Имя, Возраст</h2>
+        <div class="profile-body" style="position: relative;">
+            <button id="dots-menu-btn" onclick="toggleDotsMenu(event)" class="dots-btn hidden">⋮</button>
+            <div id="dots-dropdown" class="dots-dropdown-menu hidden">
+                <div onclick="back()" class="dropdown-item">✏️ Редактировать</div>
+                <div onclick="deleteOwnProfile()" class="dropdown-item delete-item">✕ Удалить анкету</div>
+            </div>
+            <h2 id="view-name" class="profile-title" style="padding-right: 25px;">Имя, Возраст</h2>
             <p id="view-gender-city" class="profile-sub">Пол • Город</p>
-            <p id="view-target" class="profile-target-tag">Цель: Длительное общение</p>
+            <p id="view-target" class="profile-target-tag">Цель: Длительное open</p>
             <div class="about-label">О себе</div>
             <p id="view-bio" class="view-bio-text">Описание анкеты...</p>
             <div id="view-actions-container"></div>
         </div>
     </div>
 
-    <script src="app.js?v=9"></script>
+    <script src="app.js?v=11"></script>
 </body>
 </html>
