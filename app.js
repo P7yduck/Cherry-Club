@@ -9,10 +9,8 @@ function init() {
     let encodedData = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp');
 
     if (encodedData) {
-        // Если перешли по ссылке анкеты — показываем третий экран
         showViewScreen(encodedData);
     } else {
-        // Если запуск первый раз — показываем заставку Match
         document.getElementById('screen-match').classList.remove('hidden');
     }
 }
@@ -43,11 +41,11 @@ function showViewScreen(encodedData) {
 
 function shareProfile() {
     const nameAge = document.getElementById('reg-name').value.trim();
-    const city = document.getElementById('reg-city').value.trim();
+    const city = document.getElementById('reg-city').value; // Берем выбранное значение из select
     const bio = document.getElementById('reg-bio').value.trim();
     const username = tg?.initDataUnsafe?.user?.username || "test_user";
 
-    if (!nameAge || !city || !bio) { return alert("Заполните имя, город и описание!"); }
+    if (!nameAge || !city || !bio) { return alert("Заполните имя, выберите город и описание!"); }
 
     const profileString = `name=${encodeURIComponent(nameAge)}&city=${encodeURIComponent(city)}&bio=${encodeURIComponent(bio)}&user=${username}`;
     const encodedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
@@ -55,7 +53,9 @@ function shareProfile() {
     }));
 
     const appLink = `https://t.me${BOT_USERNAME}/app?startapp=${encodedData}`;
-    const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Профиль: ${nameAge}\n📍 Локация: ${city}\n📝 О себе: ${bio}\n\n🔗 Смотреть анкету: ${appLink}\n\n⚠️ ВНИМАНИЕ: Пришлите видео-кружочек СЛЕДУЮЩИМ сообщением!`;
+    
+    // Чистый текст заявки без упоминания обязательных кружочков
+    const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Профиль: ${nameAge}\n📍 Город: ${city}\n📝 О себе: ${bio}\n\n🔗 Смотреть анкету: ${appLink}`;
 
     const finalTelegramUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
 
@@ -65,7 +65,7 @@ function shareProfile() {
         window.open(finalTelegramUrl, '_blank');
     }
     
-    alert("Инструкция:\nОтправьте текст в Чат Модерации (" + MODERATION_CHAT + "), а СЛЕДУЮЩИМ сообщением запишите туда свой видео-кружочек.");
+    alert("Инструкция:\nОтправьте текст анкеты в Чат Модерации (" + MODERATION_CHAT + "). После проверки администратором она появится в общей ленте!");
 }
 
 init();
