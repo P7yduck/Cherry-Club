@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="style.css?v=12">
     <script src="https://telegram.org"></script>
-    <!-- ПОДКЛЮЧАЕМ ОТДЕЛЬНЫЙ ФАЙЛ ГОРОДОВ -->
-    <script src="cities.js?v=11"></script>
+    <script src="cities.js?v=12"></script>
 </head>
 <body>
 
@@ -38,7 +37,6 @@
                 </div>
                 <input type="hidden" id="reg-gender" value="Парень">
                 
-                <!-- ВОЗВРАЩЕННЫЙ ВЫБОР ГОРОДА С ПОИСКОМ -->
                 <div class="about-label" style="margin-top: 10px;">Город</div>
                 <input type="text" id="city-search" placeholder="Начните вводить город..." class="profile-input-search" oninput="filterCities()" onclick="showCityList()">
                 <div id="city-dropdown" class="city-dropdown-list hidden"></div>
@@ -71,21 +69,24 @@
             <div class="header-logo-title">Cherry Club 🍒</div>
             <div id="view-avatar-circle" class="avatar-circle">👤</div>
         </div>
-        <div class="profile-body" style="position: relative;">
+        <div class="profile-body">
+            
+            <!-- КНОПКА ТРИ ТОЧКИ И МЕНЮ (НАХОДЯТСЯ ВНУТРИ ТЕЛА КАРТОЧКИ) -->
             <button id="dots-menu-btn" onclick="toggleDotsMenu(event)" class="dots-btn hidden">⋮</button>
             <div id="dots-dropdown" class="dots-dropdown-menu hidden">
                 <div onclick="back()" class="dropdown-item">✏️ Редактировать</div>
                 <div onclick="deleteOwnProfile()" class="dropdown-item delete-item">✕ Удалить анкету</div>
             </div>
-            <h2 id="view-name" class="profile-title" style="padding-right: 25px;">Имя, Возраст</h2>
+
+            <h2 id="view-name" class="profile-title" style="padding-right: 40px;">Имя, Возраст</h2>
             <p id="view-gender-city" class="profile-sub">Пол • Город</p>
-            <p id="view-target" class="profile-target-tag">Цель: Длительное open</p>
+            <p id="view-target" class="profile-target-tag">Цель: Длительное общение</p>
             <div class="about-label">О себе</div>
             <p id="view-bio" class="view-bio-text">Описание анкеты...</p>
             <div id="view-actions-container"></div>
         </div>
     </div>
 
-    <script src="app.js?v=11"></script>
+    <script src="app.js?v=12"></script>
 </body>
 </html>
