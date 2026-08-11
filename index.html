@@ -4,23 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
     <script src="https://telegram.org"></script>
 </head>
 <body>
 
-    <!-- ЭКРАН 1: СОВПАДЕНИЕ (MATCH) -->
-    <div id="screen-match" class="screen screen-match hidden">
-        <div class="match-title">Взаимность!</div>
-        <div class="heart-container">
-            <div class="heart-avatar bg-left">🤵</div>
-            <div class="heart-avatar bg-right">💃</div>
-        </div>
-        <button onclick="goToRegister()" class="btn-pink uppercase">Начать общение</button>
-        <div class="sub-text">Продолжить игру</div>
-    </div>
-
-    <!-- ЭКРАН 2: АНКЕТА / РЕГИСТРАЦИЯ -->
+    <!-- ЭКРАН 1: АНКЕТА / РЕГИСТРАЦИЯ (ОТКРЫВАЕТСЯ СРАЗУ) -->
     <div id="screen-register" class="screen screen-profile hidden">
         <div class="profile-header">
             <div class="avatar-circle">🍒</div>
@@ -50,7 +39,7 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 3: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ -->
+    <!-- ЭКРАН 2: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ (ПРОСМОТР) -->
     <div id="screen-view" class="screen screen-profile hidden">
         <div class="profile-header">
             <div class="avatar-circle">👤</div>
@@ -66,6 +55,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
 </body>
 </html>
