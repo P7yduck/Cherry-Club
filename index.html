@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=7">
     <script src="https://telegram.org"></script>
 </head>
 <body>
@@ -18,13 +18,9 @@
         <div class="profile-body">
             
             <div class="form-group-vertical">
-                <!-- ИМЯ -->
                 <input type="text" id="reg-name" placeholder="Имя" class="profile-input-line">
-                
-                <!-- ВОЗРАСТ (ПЕРЕНЕСЕН ПОД ИМЯ) -->
                 <input type="number" id="reg-age" placeholder="Возраст" class="profile-input-line" min="18" max="99">
                 
-                <!-- ПОЛ (ДОБАВЛЕН ПОД ВОЗРАСТ) -->
                 <div class="about-label" style="margin-top: 10px;">Ваш пол</div>
                 <div class="toggle-container">
                     <button type="button" id="gender-male" class="toggle-btn active" onclick="selectGender('Парень')">Парень</button>
@@ -32,14 +28,12 @@
                 </div>
                 <input type="hidden" id="reg-gender" value="Парень">
 
-                <!-- ВЫБОР ГОРОДА -->
                 <div class="about-label" style="margin-top: 10px;">Город</div>
                 <input type="text" id="city-search" placeholder="Начните вводить город..." class="profile-input-search" oninput="filterCities()" onclick="showCityList()">
                 <div id="city-dropdown" class="city-dropdown-list hidden"></div>
                 <input type="hidden" id="reg-city" value="">
             </div>
             
-            <!-- ВЫБОР ЦЕЛИ ЗНАКОМСТВА -->
             <div class="about-label">Цель знакомства</div>
             <div class="toggle-container">
                 <button type="button" id="target-long" class="toggle-btn active" onclick="selectTarget('Длительное общение')">Длительное общение</button>
@@ -47,11 +41,9 @@
             </div>
             <input type="hidden" id="reg-target" value="Длительное общение">
 
-            <!-- О СЕБЕ -->
             <div class="about-label" style="margin-top: 15px;">О себе</div>
             <textarea id="reg-bio" placeholder="Расскажите о себе и своих интересах..." rows="3" class="profile-textarea"></textarea>
             
-            <!-- ЖИВАЯ ФУНКЦИОНАЛЬНАЯ ГАЛЕРЕЯ -->
             <div class="about-label" style="margin-top: 15px;">Фотография профиля</div>
             <div class="photo-grid">
                 <div id="photo-preview" class="photo-box text-muted">НЕТ ФОТО</div>
@@ -62,15 +54,15 @@
             </div>
             <input type="hidden" id="reg-photo-base64" value="">
             
-            <button onclick="shareProfile()" class="btn-purple uppercase">Сохранить и опубликовать</button>
+            <!-- КНОПКА ТЕПЕРЬ ПРОСТО СОХРАНЯЕТ ЛОКАЛЬНО -->
+            <button onclick="saveAndShowProfile()" class="btn-purple uppercase">Сохранить анкету</button>
         </div>
     </div>
 
-    <!-- ЭКРАН 2: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ (ПРОСМОТР) -->
+    <!-- ЭКРАН 2: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ ИЛИ СВОЙ ПРОФИЛЬ (ПРОСМОТР) -->
     <div id="screen-view" class="screen screen-profile hidden">
         <div class="profile-header">
             <div class="header-logo-title">Cherry Club 🍒</div>
-            <!-- Сюда подгрузится фото пользователя или смайлик по умолчанию -->
             <div id="view-avatar-circle" class="avatar-circle">👤</div>
         </div>
         <div class="profile-body">
@@ -81,10 +73,13 @@
             <div class="about-label">О себе</div>
             <p id="view-bio" class="view-bio-text">Описание анкеты...</p>
             
-            <a id="view-chat-btn" href="#" target="_blank" class="btn-pink uppercase" style="text-decoration:none; text-align:center; display:block; line-height:24px;">Написать</a>
+            <!-- БЛОК ДИНАМИЧЕСКИХ КНОПОК -->
+            <div id="view-actions-container" class="space-y-2">
+                <!-- Сюда JS подставит нужные кнопки в зависимости от того, чужой профиль или свой -->
+            </div>
         </div>
     </div>
 
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=7"></script>
 </body>
 </html>
