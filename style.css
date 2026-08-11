@@ -22,10 +22,12 @@ body, html { margin: 0; padding: 0; background-color: #4a154b; color: #ffffff; h
 .avatar-circle { width: 110px; height: 110px; border-radius: 50%; border: 4px solid #621244; background-color: #f3e5f5; display: flex; justify-content: center; align-items: center; font-size: 50px; position: absolute; bottom: -45px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
 .profile-body { background-color: #ffffff; color: #4a154b; flex-grow: 1; padding: 60px 25px 20px 25px; display: flex; flex-direction: column; }
 
-/* ПОЛЯ ВВОДА (СТИЛЬ ПОД ОРИГИНАЛ) */
+/* ПОЛЯ ВВОДА */
 .form-group { text-align: center; margin-bottom: 20px; }
-.profile-input-title { width: 100%; border: none; text-align: center; font-size: 22px; font-weight: bold; color: #4a154b; outline: none; margin-bottom: 5px; }
-.profile-input-sub { width: 100%; border: none; text-align: center; font-size: 14px; color: #8e8e8e; outline: none; }
+.profile-input-title { width: 100%; border: none; text-align: center; font-size: 22px; font-weight: bold; color: #4a154b; outline: none; margin-bottom: 5px; background: transparent; }
+.profile-input-sub-select { width: 100%; border: none; font-size: 14px; color: #8e8e8e; outline: none; background: transparent; cursor: pointer; text-align-last: center; -webkit-appearance: none; -moz-appearance: none; appearance: none; margin-top: 5px; }
+.profile-input-sub-select option { color: #4a154b; background: white; }
+
 .profile-title { text-align: center; font-size: 24px; font-weight: bold; margin: 0 0 5px 0; color: #4a154b; }
 .profile-sub { text-align: center; font-size: 14px; color: #8e8e8e; margin: 0 0 20px 0; }
 
