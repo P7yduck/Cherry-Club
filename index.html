@@ -4,75 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cherry Club 🍒</title>
-    <script src="https://telegram.org"></script>
     <style>
-        body { background-color: #1a050d; color: #fce7f3; font-family: sans-serif; padding: 15px; margin: 0; box-sizing: border-box; }
-        .btn { background: linear-gradient(135deg, #881337 0%, #4c0519 100%); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
+        body { background-color: #1a050d; color: #fce7f3; font-family: sans-serif; padding: 15px; margin: 0; box-sizing: border-box; text-align: center; }
+        .btn { background: linear-gradient(135deg, #881337 0%, #4c0519 100%); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; display: block; box-sizing: border-box; text-decoration: none; }
         .input { width: 100%; background-color: #2e0814; border: 1px solid #881337; padding: 10px; border-radius: 8px; color: white; margin-bottom: 12px; box-sizing: border-box; }
-        .banner { background: #3b0712; border: 1px solid #f43f5e; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; }
-        .hidden { display: none; }
-        .card { background: #2e0814; border: 1px solid #881337; padding: 20px; border-radius: 12px; margin-top: 15px; }
+        .banner { background: #3b0712; border: 1px solid #f43f5e; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; text-align: left; }
+        .card { background: #2e0814; border: 1px solid #881337; padding: 20px; border-radius: 12px; margin-top: 15px; text-align: left; }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align:center; color:#f43f5e; margin-bottom: 25px;">CHERRY CLUB 🍒</h1>
+    <h1 style="color:#f43f5e; margin-bottom: 25px;">CHERRY CLUB 🍒</h1>
 
     <!-- БАННЕР БЕЗОПАСНОСТИ -->
-    <div id="safety-banner" class="banner hidden">
+    <div class="banner">
         <strong>🛡️ Совет по безопасности:</strong>
-        <p id="safety-text" style="margin: 5px 0 0 0;"></p>
+        <p style="margin: 5px 0 0 0;">Встречайтесь только в людных местах и на нейтральной территории. Никогда не переводите деньги мошенникам!</p>
     </div>
 
     <!-- ЭКРАН РЕГИСТРАЦИИ -->
-    <div id="screen-register" class="hidden">
-        <h3 style="margin-top:0;">Создай анкету</h3>
+    <div id="screen-register">
+        <h3 style="margin-top:0; text-align: left;">Создай анкету</h3>
         <input type="text" id="reg-name" placeholder="Имя" class="input">
         <input type="number" id="reg-age" placeholder="Возраст" class="input">
         <input type="text" id="reg-city" placeholder="Город" class="input">
         <textarea id="reg-bio" placeholder="О себе..." rows="3" class="input" style="resize:none;"></textarea>
         
-        <p style="font-size:12px; color:#f43f5e; text-align:center; margin: 15px 0 5px 0;">📹 Потребуется видео-верификация кружочком!</p>
+        <p style="font-size:12px; color:#f43f5e; margin: 15px 0 5px 0;">📹 Потребуется видео-верификация кружочком!</p>
         <button onclick="shareProfile()" class="btn">Опубликовать анкету</button>
     </div>
 
-    <!-- ЭКРАН ПРОСМОТРА -->
-    <div id="screen-view" class="hidden" style="text-align:center;">
+    <!-- ЭКРАН ПРОСМОТРА (СКРЫТ ПО УМОЛЧАНИЮ) -->
+    <div id="screen-view" style="display: none;">
         <span style="color:#10b981; font-weight:bold; font-size:12px;">🛡️ ПРОФИЛЬ ВЕРИФИЦИРОВАН</span>
-        <div class="card" style="text-align:left;">
-            <h2 id="view-name" style="margin:0;"></h2>
-            <p id="view-city" style="color:#f43f5e; margin:5px 0;"></p>
-            <p id="view-bio" style="font-style:italic; background:#1a050d; padding:10px; border-radius:8px;"></p>
+        <div class="card">
+            <h2 id="view-name" style="margin:0;">Имя, Возраст</h2>
+            <p id="view-city" style="color:#f43f5e; margin:5px 0;">Город</p>
+            <p id="view-bio" style="font-style:italic; background:#1a050d; padding:10px; border-radius:8px;">О себе</p>
         </div>
-        <a id="view-chat-btn" href="#" target="_blank" class="btn" style="display:block; text-decoration:none; background:#10b981; margin-top:15px; box-sizing: border-box;">💌 Написать в ЛС</a>
+        <a id="view-chat-btn" href="#" target="_blank" class="btn" style="background:#10b981; margin-top:15px;">💌 Написать в ЛС</a>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready(); 
-        tg.expand();
+        // Защита: инициализируем WebApp только если скрипт доступен
+        let tg = null;
+        if (window.Telegram && window.Telegram.WebApp) {
+            tg = window.Telegram.WebApp;
+            tg.ready(); 
+            tg.expand();
+        }
 
         const BOT_USERNAME = "sweet_cherry_club_bot"; 
-        const MODERATION_CHAT = "https://t.me/+hI06u9Gscp03Y2Vi"; 
+        const MODERATION_CHAT = "https://t.me"; 
 
-        const safetyTips = [
-            "Встречайтесь только в людных местах и на нейтральной территории.",
-            "Предупредите друзей или родных о своих планах и месте встречи.",
-            "Никогда не переводите деньги! Проект бесплатный, деньги просят только мошенники.",
-            "Не делитесь личным адресом или геолокацией до личной встречи.",
-            "Если собеседник просит перейти по внешней ссылке — это обман."
-        ];
-
-        function init() {
-            const randomIndex = Math.floor(Math.random() * safetyTips.length);
-            document.getElementById('safety-text').innerText = safetyTips[randomIndex];
-            document.getElementById('safety-banner').classList.remove('hidden');
-
-            const startParam = tg.initDataUnsafe.start_param;
-            if (startParam) {
-                showViewScreen(startParam);
-            } else {
-                document.getElementById('screen-register').classList.remove('hidden');
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let encodedData = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp');
+            
+            if (encodedData) {
+                showViewScreen(encodedData);
             }
         }
 
@@ -86,8 +76,10 @@
                 document.getElementById('view-name').innerText = params.get('name') + ", " + params.get('age');
                 document.getElementById('view-city').innerText = params.get('city');
                 document.getElementById('view-bio').innerText = "«" + params.get('bio') + "»";
-                document.getElementById('view-chat-btn').href = "https://t.me/" + params.get('user');
-                document.getElementById('screen-view').classList.remove('hidden');
+                document.getElementById('view-chat-btn').href = "https://t.me" + params.get('user');
+                
+                document.getElementById('screen-register').style.style.display = 'none';
+                document.getElementById('screen-view').style.style.display = 'block';
             } catch (e) {
                 alert("Ошибка загрузки профиля.");
             }
@@ -98,24 +90,29 @@
             const age = document.getElementById('reg-age').value.trim();
             const city = document.getElementById('reg-city').value.trim();
             const bio = document.getElementById('reg-bio').value.trim();
-            const username = tg.initDataUnsafe.user?.username;
+            
+            const username = tg?.initDataUnsafe?.user?.username || "test_user";
 
             if (!name || !age || !city || !bio) { return alert("Заполните все поля!"); }
-            if (!username) { return alert("У вас должен быть указан @username в настройках Telegram!"); }
 
             const profileString = `name=${name}&age=${age}&city=${city}&bio=${bio}&user=${username}`;
             const encodedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
                 return String.fromCharCode('0x' + p1);
             }));
 
-            const appLink = `https://t.me{BOT_USERNAME}/app?startapp=${encodedData}`;
+            const appLink = `https://t.me${BOT_USERNAME}/app?startapp=${encodedData}`;
             const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: ${name}, ${age}\n📍 Город: ${city}\n📝 О себе: ${bio}\n\n🔗 Профиль: ${appLink}\n\n⚠️ ВНИМАНИЕ: Запишите видео-кружочек СЛЕДУЮЩИМ сообщением в чат для верификации!`;
 
-            tg.openTelegramLink(`https://t.me{encodeURIComponent(appLink)}&text=${encodeURIComponent(shareText)}`);
-            alert("Сейчас откроется Telegram. Отправьте сгенерированный текст в открывшийся Чат Модерации, а СЛЕДУЮЩИМ сообщением запишите туда свой видео-кружочек.");
+            if (tg) {
+                tg.openTelegramLink(`https://t.meshare/url?url=${encodeURIComponent(appLink)}&text=${encodeURIComponent(shareText)}`);
+            } else {
+                const webShareUrl = `https://t.meshare/url?url=${encodeURIComponent(appLink)}&text=${encodeURIComponent(shareText)}`;
+                window.open(webShareUrl, '_blank');
+            }
+            alert("Инструкция:\nОтправьте сгенерированный текст в Чат Модерации (" + MODERATION_CHAT + "), а СЛЕДУЮЩИМ сообщением запишите туда свой видео-кружочек.");
         }
 
-        init();
+        checkUrlParams();
     </script>
 </body>
 </html>
