@@ -4,30 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=5">
     <script src="https://telegram.org"></script>
 </head>
 <body>
 
-    <!-- ЭКРАН 1: АНКЕТА / РЕГИСТРАЦИЯ (ОТКРЫВАЕТСЯ СРАЗУ) -->
+    <!-- ЭКРАН 1: АНКЕТА / РЕГИСТРАЦИЯ -->
     <div id="screen-register" class="screen screen-profile hidden">
         <div class="profile-header">
+            <!-- КРАСИВОЕ НАЗВАНИЕ СВЕРХУ -->
+            <div class="header-logo-title">Cherry Club 🍒</div>
             <div class="avatar-circle">🍒</div>
         </div>
         <div class="profile-body">
+            
+            <!-- РАЗДЕЛЬНЫЕ ПОЛЯ ДЛЯ ИМЕНИ И ВОЗРАСТА -->
+            <div class="form-group-split">
+                <input type="text" id="reg-name" placeholder="Имя" class="profile-input-split-name">
+                <input type="number" id="reg-age" placeholder="Возраст" class="profile-input-split-age" min="18" max="99">
+            </div>
+
             <div class="form-group">
-                <input type="text" id="reg-name" placeholder="Ваше имя, возраст" class="profile-input-title">
-                
                 <!-- ВЫБОР ГОРОДА С ПОИСКОМ -->
                 <input type="text" id="city-search" placeholder="Начните вводить город..." class="profile-input-search" oninput="filterCities()" onclick="showCityList()">
-                <div id="city-dropdown" class="city-dropdown-list hidden">
-                    <!-- Список городов генерируется из app.js -->
-                </div>
+                <div id="city-dropdown" class="city-dropdown-list hidden"></div>
                 <input type="hidden" id="reg-city" value="">
             </div>
             
-            <div class="about-label">О себе</div>
-            <textarea id="reg-bio" placeholder="Расскажите о себе, своих интересах и кого вы ищете..." rows="3" class="profile-textarea"></textarea>
+            <!-- ВЫБОР ЦЕЛИ ЗНАКОМСТВА -->
+            <div class="about-label">Цель знакомства</div>
+            <div class="target-toggle-container">
+                <button type="button" id="target-long" class="target-btn active" onclick="selectTarget('Длительное общение')">Длительное общение</button>
+                <button type="button" id="target-short" class="target-btn" onclick="selectTarget('На одну ночь')">На одну ночь</button>
+            </div>
+            <input type="hidden" id="reg-target" value="Длительное общение">
+
+            <div class="about-label" style="margin-top: 15px;">О себе</div>
+            <textarea id="reg-bio" placeholder="Расскажите о себе и своих интересах..." rows="3" class="profile-textarea"></textarea>
             
             <div class="photo-grid">
                 <div class="photo-box text-muted">ФОТО</div>
@@ -42,11 +55,13 @@
     <!-- ЭКРАН 2: АНКЕТА ДРУГОГО ПОЛЬЗОВАТЕЛЯ (ПРОСМОТР) -->
     <div id="screen-view" class="screen screen-profile hidden">
         <div class="profile-header">
+            <div class="header-logo-title">Cherry Club 🍒</div>
             <div class="avatar-circle">👤</div>
         </div>
         <div class="profile-body">
             <h2 id="view-name" class="profile-title">Имя, Возраст</h2>
-            <p id="view-city" class="profile-sub">Город, Регион</p>
+            <p id="view-city" class="profile-sub">Город</p>
+            <p id="view-target" class="profile-target-tag">Цель: Длительное общение</p>
             
             <div class="about-label">О себе</div>
             <p id="view-bio" class="view-bio-text">Описание анкеты...</p>
@@ -55,6 +70,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=4"></script>
+    <script src="app.js?v=5"></script>
 </body>
 </html>
