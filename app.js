@@ -2,7 +2,7 @@ const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
 const BOT_USERNAME = "sweet_cherry_club_bot";
-const MODERATION_CHAT = "https://t.me";
+const MODERATION_CHAT = "https://t.me/+hI06u9Gscp03Y2Vi";
 
 const cities = [
     "Архангельск", "Северодвинск", "Котлас", "Новодвинск", "Коряжма", "Мирный", "Вельск",
@@ -94,7 +94,6 @@ function selectTarget(targetValue) {
     }
 }
 
-// ОБРАБОТКА И СЖАТИЕ ФОТО ДЛЯ ССЫЛКИ
 function handlePhotoUpload(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -102,7 +101,6 @@ function handlePhotoUpload(input) {
             const img = new Image();
             img.src = e.target.result;
             img.onload = function() {
-                // Создаем холст для экстремального сжатия фото ради экономии места в ссылке
                 const canvas = document.createElement('canvas');
                 const MAX_WIDTH = 150;
                 const scaleSize = MAX_WIDTH / img.width;
@@ -112,14 +110,12 @@ function handlePhotoUpload(input) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
-                // Переводим в сжатый base64 JPEG
                 const base64Data = canvas.toDataURL('image/jpeg', 0.5);
                 document.getElementById('reg-photo-base64').value = base64Data;
                 
-                // Рисуем превью в окне приложения
                 const preview = document.getElementById('photo-preview');
                 preview.innerText = '';
-                preview.style.backgroundImage = `url(${base64Data})`;
+                preview.style.backgroundImage = "url('" + base64Data + "')";
             };
         };
         reader.readAsDataURL(input.files[0]);
@@ -139,12 +135,11 @@ function showViewScreen(encodedData) {
         document.getElementById('view-bio').innerText = params.get('bio');
         document.getElementById('view-chat-btn').href = "https://t.me" + params.get('user');
         
-        // Подгружаем фото аватара, если оно передано по ссылке
         const photoData = params.get('photo');
         const avatarCircle = document.getElementById('view-avatar-circle');
         if (photoData && photoData.startsWith('data:image')) {
             avatarCircle.innerText = '';
-            avatarCircle.style.backgroundImage = `url(${photoData})`;
+            avatarCircle.style.backgroundImage = "url('" + photoData + "')";
         } else {
             avatarCircle.innerText = params.get('gender') === 'Девушка' ? '💃' : '🤵';
             avatarCircle.style.backgroundImage = 'none';
@@ -167,20 +162,22 @@ function shareProfile() {
     const photo = document.getElementById('reg-photo-base64').value;
     const username = tg?.initDataUnsafe?.user?.username || "test_user";
 
-    if (!name || !age || !city || !bio) { return alert("Заполните имя, возраст, выберите город из списка и заполните описание!"); }
+    if (!name || !age || !city || !bio) { 
+        return alert("Заполните имя, возраст, выберите город из списка и заполните описание!"); 
+    }
 
-    // Собираем все параметры
-    let profileString = `name=${encodeURIComponent(name)}&age=${encodeURIComponent(age)}&gender=${encodeURIComponent(gender)}&city=${encodeURIComponent(city)}&target=${encodeURIComponent(target)}&bio=${encodeURIComponent(bio)}&user=${username}`;
+    let profileString = "name=" + encodeURIComponent(name) + "&age=" + encodeURIComponent(age) + "&gender=" + encodeURIComponent(gender) + "&city=" + encodeURIComponent(city) + "&target=" + encodeURIComponent(target) + "&bio=" + encodeURIComponent(bio) + "&user=" + username;
+    
     if (photo) {
-        profileString += `&photo=${encodeURIComponent(photo)}`;
+        profileString += "&photo=" + encodeURIComponent(photo);
     }
 
     const encodedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
         return String.fromCharCode('0x' + p1);
     }));
 
-    const appLink = `https://t.me${BOT_USERNAME}/app?startapp=${encodedData}`;
-    const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: ${name}, ${age} лет (${gender})\n📍 Город: ${city}\n🎯 Цель: ${target}\n📝 О себе: ${bio}\n\n🔗 Смотреть анкету и фото: ${appLink}`;
+    const appLink = "https://t.me" + BOT_USERNAME + "/app?startapp=" + encodedData;
+    const shareText = "🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: " + name + ", " + age + " лет (" + gender + ")\n📍 Город: " + city + "\n🎯 Цель: " + target + "\n📝 О себе: " + bio + "\n\n🔗 Смотреть анкету и фото: " + appLink;
 
     const finalTelegramUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
 
@@ -190,7 +187,7 @@ function shareProfile() {
         window.open(finalTelegramUrl, '_blank');
     }
     
-    alert("Инструкция:\nОтправьте текст анкеты в Чат Модерации (" + MODERATION_CHAT + "). После проверки администратором она появится в общей ленте!");
+    alert("Инструкция:\nОтправьте текст анкеты в Чат Модерации (https://t.me). После проверки администратором она появится в общей ленте!");
 }
 
 init();
