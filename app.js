@@ -31,7 +31,6 @@ function init() {
     if (encodedData) {
         showViewScreen(encodedData);
     } else {
-        // Убрали экран совпадений, сразу открываем создание анкеты
         document.getElementById('screen-register').classList.remove('hidden');
     }
 }
@@ -48,13 +47,8 @@ function renderCityList() {
     });
 }
 
-function showCityList() {
-    document.getElementById('city-dropdown').classList.remove('hidden');
-}
-
-function hideCityList() {
-    document.getElementById('city-dropdown').classList.add('hidden');
-}
+function showCityList() { document.getElementById('city-dropdown').classList.remove('hidden'); }
+function hideCityList() { document.getElementById('city-dropdown').classList.add('hidden'); }
 
 function filterCities() {
     const value = document.getElementById('city-search').value.toLowerCase();
@@ -80,6 +74,17 @@ function selectCity(city) {
     hideCityList();
 }
 
+function selectTarget(targetValue) {
+    document.getElementById('reg-target').value = targetValue;
+    if (targetValue === 'Длительное общение') {
+        document.getElementById('target-long').classList.add('active');
+        document.getElementById('target-short').classList.remove('active');
+    } else {
+        document.getElementById('target-short').classList.add('active');
+        document.getElementById('target-long').classList.remove('active');
+    }
+}
+
 function showViewScreen(encodedData) {
     try {
         const decodedString = decodeURIComponent(atob(encodedData).split('').map(function(c) {
@@ -87,8 +92,9 @@ function showViewScreen(encodedData) {
         }).join(''));
         const params = new URLSearchParams(decodedString);
         
-        document.getElementById('view-name').innerText = params.get('name');
+        document.getElementById('view-name').innerText = params.get('name') + ", " + params.get('age');
         document.getElementById('view-city').innerText = params.get('city');
+        document.getElementById('view-target').innerText = "Цель: " + params.get('target');
         document.getElementById('view-bio').innerText = params.get('bio');
         document.getElementById('view-chat-btn').href = "https://t.me" + params.get('user');
         
@@ -100,20 +106,22 @@ function showViewScreen(encodedData) {
 }
 
 function shareProfile() {
-    const nameAge = document.getElementById('reg-name').value.trim();
+    const name = document.getElementById('reg-name').value.trim();
+    const age = document.getElementById('reg-age').value.trim();
     const city = document.getElementById('reg-city').value; 
+    const target = document.getElementById('reg-target').value;
     const bio = document.getElementById('reg-bio').value.trim();
     const username = tg?.initDataUnsafe?.user?.username || "test_user";
 
-    if (!nameAge || !city || !bio) { return alert("Заполните имя, выберите город из списка и заполните описание!"); }
+    if (!name || !age || !city || !bio) { return alert("Заполните имя, возраст, выберите город из списка и заполните описание!"); }
 
-    const profileString = `name=${encodeURIComponent(nameAge)}&city=${encodeURIComponent(city)}&bio=${encodeURIComponent(bio)}&user=${username}`;
+    const profileString = `name=${encodeURIComponent(name)}&age=${encodeURIComponent(age)}&city=${encodeURIComponent(city)}&target=${encodeURIComponent(target)}&bio=${encodeURIComponent(bio)}&user=${username}`;
     const encodedData = btoa(encodeURIComponent(profileString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
         return String.fromCharCode('0x' + p1);
     }));
 
     const appLink = `https://t.me${BOT_USERNAME}/app?startapp=${encodedData}`;
-    const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Профиль: ${nameAge}\n📍 Город: ${city}\n📝 О себе: ${bio}\n\n🔗 Смотреть анкету: ${appLink}`;
+    const shareText = `🍒 ЗАЯВКА CHERRY CLUB:\n\n👤 Имя: ${name}, ${age} лет\n📍 Город: ${city}\n🎯 Цель: ${target}\n📝 О себе: ${bio}\n\n🔗 Смотреть анкету: ${appLink}`;
 
     const finalTelegramUrl = "https://t.meshare/url?url=" + encodeURIComponent(appLink) + "&text=" + encodeURIComponent(shareText);
 
