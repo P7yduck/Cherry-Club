@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cherry Club 🍒</title>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
     <script src="https://telegram.org"></script>
 </head>
 <body>
 
     <!-- ЭКРАН 1: СОВПАДЕНИЕ (MATCH) -->
     <div id="screen-match" class="screen screen-match hidden">
-        <div class="match-title">Coincidence!</div>
+        <div class="match-title">Взаимность!</div>
         <div class="heart-container">
             <div class="heart-avatar bg-left">🤵</div>
             <div class="heart-avatar bg-right">💃</div>
         </div>
-        <button onclick="goToRegister()" class="btn-pink uppercase">Start Chatting</button>
-        <div class="sub-text">Keep on Playing</div>
+        <button onclick="goToRegister()" class="btn-pink uppercase">Начать общение</button>
+        <div class="sub-text">Продолжить игру</div>
     </div>
 
     <!-- ЭКРАН 2: АНКЕТА / РЕГИСТРАЦИЯ -->
@@ -27,34 +27,26 @@
         </div>
         <div class="profile-body">
             <div class="form-group">
-                <input type="text" id="reg-name" placeholder="Account Name, Age" class="profile-input-title">
+                <input type="text" id="reg-name" placeholder="Ваше имя, возраст" class="profile-input-title">
                 
-                <!-- ВЫБОР ГОРОДА ВМЕСТО РУЧНОГО ВВОДА -->
-                <select id="reg-city" class="profile-input-sub-select">
-                    <option value="" disabled selected>Выберите город...</option>
-                    <option value="Москва">Москва</option>
-                    <option value="Санкт-Петербург">Санкт-Петербург</option>
-                    <option value="Новосибирск">Новосибирск</option>
-                    <option value="Екатеринбург">Екатеринбург</option>
-                    <option value="Казань">Казань</option>
-                    <option value="Нижний Новгород">Нижний Новгород</option>
-                    <option value="Челябинск">Челябинск</option>
-                    <option value="Самара">Самара</option>
-                    <option value="Ростов-на-Дону">Ростов-на-Дону</option>
-                    <option value="Краснодар">Краснодар</option>
-                </select>
+                <!-- ВЫБОР ГОРОДА С ПОИСКОМ -->
+                <input type="text" id="city-search" placeholder="Начните вводить город..." class="profile-input-search" oninput="filterCities()" onclick="showCityList()">
+                <div id="city-dropdown" class="city-dropdown-list hidden">
+                    <!-- Список городов генерируется из app.js -->
+                </div>
+                <input type="hidden" id="reg-city" value="">
             </div>
             
-            <div class="about-label">About</div>
-            <textarea id="reg-bio" placeholder="Tell something about yourself..." rows="3" class="profile-textarea"></textarea>
+            <div class="about-label">О себе</div>
+            <textarea id="reg-bio" placeholder="Расскажите о себе, своих интересах и кого вы ищете..." rows="3" class="profile-textarea"></textarea>
             
             <div class="photo-grid">
-                <div class="photo-box text-muted">PHOTO</div>
-                <div class="photo-box text-muted">PHOTO</div>
+                <div class="photo-box text-muted">ФОТО</div>
+                <div class="photo-box text-muted">ФОТО</div>
                 <div class="photo-box add-btn">+</div>
             </div>
             
-            <button onclick="shareProfile()" class="btn-purple uppercase">Save & Publish</button>
+            <button onclick="shareProfile()" class="btn-purple uppercase">Сохранить и опубликовать</button>
         </div>
     </div>
 
@@ -64,16 +56,16 @@
             <div class="avatar-circle">👤</div>
         </div>
         <div class="profile-body">
-            <h2 id="view-name" class="profile-title">Name, Age</h2>
-            <p id="view-city" class="profile-sub">City, Country</p>
+            <h2 id="view-name" class="profile-title">Имя, Возраст</h2>
+            <p id="view-city" class="profile-sub">Город, Регион</p>
             
-            <div class="about-label">About</div>
-            <p id="view-bio" class="view-bio-text">Bio description...</p>
+            <div class="about-label">О себе</div>
+            <p id="view-bio" class="view-bio-text">Описание анкеты...</p>
             
-            <a id="view-chat-btn" href="#" target="_blank" class="btn-pink uppercase" style="text-decoration:none; text-align:center; display:block; line-height:24px;">Message</a>
+            <a id="view-chat-btn" href="#" target="_blank" class="btn-pink uppercase" style="text-decoration:none; text-align:center; display:block; line-height:24px;">Написать</a>
         </div>
     </div>
 
-    <script src="app.js?v=2"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
