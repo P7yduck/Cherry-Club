@@ -31,6 +31,15 @@ function authAction(type) {
     }
 }
 
+// НАВАТНАЯ ФУНКЦИЯ ЗАКРЫТИЯ ПРИЛОЖЕНИЯ
+function closeApp() {
+    if (tg && tg.close) {
+        tg.close();
+    } else {
+        window.close();
+    }
+}
+
 function renderCityList() {
     const container = document.getElementById("city-dropdown");
     if (!container || typeof cities === "undefined") return;
@@ -48,7 +57,7 @@ function hideCityList() { const el = document.getElementById("city-dropdown"); i
 
 function filterCities() {
     const value = document.getElementById("city-search").value.toLowerCase();
-    const items = document.querySelectorAll(".city-item");
+    const items = document.querySelectorAll('.city-item');
     let hasResults = false;
     items.forEach(item => {
         if (item.innerText.toLowerCase().includes(value)) { item.style.display = "block"; hasResults = true; }
@@ -72,11 +81,10 @@ function validateAgeInput(input) {
 
 function toggleDotsMenu(event) { event.stopPropagation(); const d = document.getElementById("dots-dropdown"); if (d) d.classList.toggle("hidden"); }
 function selectGender(val) { document.getElementById("reg-gender").value = val; document.getElementById("gender-male").classList.toggle("active", val === "Парень"); document.getElementById("gender-female").classList.toggle("active", val === "Девушка"); }
-// Исправлено: вставка двойных кавычек вместо обратных апострофов
 function selectTarget(val) { document.getElementById("reg-target").value = val; document.getElementById("target-long").classList.toggle("active", val === "Длительное общение"); document.getElementById("target-short").classList.toggle("active", val === "На одну ночь"); }
 
 function handlePhotoUpload(input) {
-    if (input.files && input.files[0]) {
+    if (input.files && input.files) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const img = new Image(); img.src = e.target.result;
@@ -90,7 +98,7 @@ function handlePhotoUpload(input) {
                 if (p) { p.innerText = ""; p.style.backgroundImage = "url('" + b64 + "')"; }
             };
         };
-        reader.readAsDataURL(input.files[0]);
+        reader.readAsDataURL(input.files);
     }
 }
 
@@ -159,15 +167,15 @@ function back() { document.getElementById("screen-view").classList.add("hidden")
 
 function shareLink() {
     const link = "https://t.me" + BOT_USERNAME + "/app?startapp=" + currentGeneratedData;
-    const url = "https://t.meshare/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent("🍒 Моя анкета в Cherry Club:");
-    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, "_blank");
+    const url = "https://t.meshare/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent("🍒 Моя анкету в Cherry Club:");
+    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, '_blank');
 }
 
 function sendMod() {
     const link = "https://t.me" + BOT_USERNAME + "/app?startapp=" + currentGeneratedData;
     const txt = "🍒 ЗАЯВКА НА ВЕРИФИКАЦИЮ:\n\n🔗 Проверить анкету: " + link + "\n\n⚠️ ВНИМАНИЕ: Запишите видео-кружочек СЛЕДУЮЩИМ сообщением в чат!";
     const url = "https://t.meshare/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent(txt);
-    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, "_blank");
+    if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, '_blank');
     alert("Отправьте текст в Чат Модерации, а СЛЕДУЮЩИМ сообщением запишите кружочек!");
 }
 
