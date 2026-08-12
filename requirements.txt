@@ -1,0 +1,3 @@
+aiogram==3.x.x  # или pyTelegramBotAPI, смотря что используете
+psycopg2-binary  # если выбрали PostgreSQL (Supabase/Neon)
+python-dotenv
